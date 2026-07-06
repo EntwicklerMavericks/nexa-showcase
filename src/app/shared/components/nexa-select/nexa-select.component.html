@@ -1,0 +1,31 @@
+@if (isMobile) {
+  <mat-form-field appearance="outline" class="w-100" (click)="openMobileSelector()" [class.disabled]="disabled">
+    @if (label) {
+      <mat-label>{{ label }}</mat-label>
+    }
+    <input matInput [value]="getDisplayValue()" readonly [placeholder]="placeholder || ''" [disabled]="disabled"/>
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+  </mat-form-field>
+} @else {
+  <mat-form-field appearance="outline" class="w-100">
+    @if (label) {
+      <mat-label>{{ label }}</mat-label>
+    }
+    <mat-select 
+      [placeholder]="placeholder || ''" 
+      [disabled]="disabled"
+      [required]="required"
+      [value]="value"
+      (selectionChange)="onDesktopSelectionChange($event.value)">
+      @for (opt of options; track opt.value) {
+        <mat-option [value]="opt.value">
+          {{ opt.label }}
+          @if (opt.subLabel) {
+            <span class="sub-label-inline">— {{ opt.subLabel }}</span>
+          }
+        </mat-option>
+      }
+      <ng-content select="mat-option"></ng-content>
+    </mat-select>
+  </mat-form-field>
+}

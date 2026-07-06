@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>{{ data.fornecedor ? 'Editar Fornecedor' : 'Novo Fornecedor' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-2">
+        <mat-label>Razão Social / Nome</mat-label>
+        <input matInput formControlName="nome" maxlength="255" />
+      </mat-form-field>
+      <nexa-select label="Tipo" class="flex-1" formControlName="tipo">
+          <mat-option value="PF">Pessoa Física</mat-option>
+          <mat-option value="PJ">Pessoa Jurídica</mat-option>
+        </nexa-select>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>{{ isPJ ? 'CNPJ' : 'CPF' }}</mat-label>
+        <input matInput formControlName="cpfCnpj" [mask]="isPJ ? '00.000.000/0000-00' : '000.000.000-00'" />
+      </mat-form-field>
+      @if (isPJ) {
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Inscrição Estadual</mat-label>
+          <input matInput formControlName="ie" maxlength="20" />
+        </mat-form-field>
+      }
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>E-mail</mat-label>
+        <input matInput formControlName="email" type="email" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Telefone</mat-label>
+        <input matInput formControlName="telefone" mask="(00) 0000-0000||(00) 0 0000-0000" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-2">
+        <mat-label>Endereço</mat-label>
+        <input matInput formControlName="endereco" maxlength="500" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Cidade</mat-label>
+        <input matInput formControlName="cidade" maxlength="100" />
+      </mat-form-field>
+      <nexa-select label="Estado" class="flex-1" formControlName="estado">
+          <mat-option [value]="''">—</mat-option>
+          @for (uf of estados; track uf) {
+            <mat-option [value]="uf">{{ uf }}</mat-option>
+          }
+        </nexa-select>
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>CEP</mat-label>
+        <input matInput formControlName="cep" mask="00000-000" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Observações</mat-label>
+      <textarea matInput formControlName="observacoes" rows="3" maxlength="1000"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="!form.valid">Salvar</button>
+</mat-dialog-actions>

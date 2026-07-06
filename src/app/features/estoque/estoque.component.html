@@ -1,0 +1,535 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Controle de Estoque</h2>
+    <span class="record-count" *ngIf="totalRecords() > 0 && activeTab() === 'inventory'">
+      {{ totalRecords() }} produto(s) monitorados
+    </span>
+    <span class="record-count" *ngIf="reposicaoItens().length > 0 && activeTab() === 'reposicao'">
+      {{ reposicaoItens().length }} produto(s) abaixo do mínimo
+    </span>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- NEXA PREMIUM SEGMENTED TABS                                               -->
+<!-- ========================================================================= -->
+<div class="nexa-tabs">
+  <button
+    class="nexa-tab-btn"
+    [class.active]="activeTab() === 'inventory'"
+    (click)="activeTab.set('inventory')"
+  >
+    <mat-icon>inventory_2</mat-icon> Visão Geral do Estoque
+  </button>
+  <button
+    class="nexa-tab-btn"
+    [class.active]="activeTab() === 'reposicao'"
+    (click)="activeTab.set('reposicao')"
+  >
+    <mat-icon>assignment_turned_in</mat-icon> Relatório de Reposição
+    <span class="tab-badge" *ngIf="alertas().length > 0">{{ alertas().length }}</span>
+  </button>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 1. INVENTORY VIEW TAB                                                     -->
+<!-- ========================================================================= -->
+<div *ngIf="activeTab() === 'inventory'" class="nexa-fade-in">
+  <!-- ALERT DECK (LOW STOCK WARNINGS) -->
+  <div class="alerts-section" *ngIf="alertas().length > 0">
+    <h3 class="section-title">
+      <mat-icon color="warn">warning</mat-icon>
+      Alertas de Estoque Baixo ({{ alertas().length }})
+    </h3>
+    <div class="alerts-grid">
+      @for (alerta of alertas(); track alerta.id) {
+        <div class="alert-card nexa-card">
+          <div class="alert-header">
+            <span class="sku-cell">{{ alerta.sku }}</span>
+            <span class="alert-cat">{{ alerta.categoriaNome || 'Sem Categoria' }}</span>
+          </div>
+          <div class="alert-name">{{ alerta.nome }}</div>
+          <div class="alert-stock">
+            <div class="stock-numbers">
+              <span class="current stock-low">{{ alerta.estoqueAtual }}</span>
+              <span class="separator">/</span>
+              <span class="minimum">{{ alerta.estoqueMinimo }}</span>
+            </div>
+            <span class="stock-label">atual / mínimo</span>
+          </div>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="adjust-btn"
+            (click)="openMovimentacao(alerta.id, alerta.nome)"
+          >
+            <mat-icon>add</mat-icon> Ajustar Estoque
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (alertas().length === 0) {
+    <div class="no-alerts nexa-card">
+      <mat-icon color="success">check_circle</mat-icon>
+      <div>
+        <h3>Estoque Seguro</h3>
+        <p>Todos os produtos ativos possuem quantidade superior ao limite mínimo.</p>
+      </div>
+    </div>
+  }
+
+  <!-- GENERAL INVENTORY LIST -->
+  <div class="inventory-section" style="margin-top: 32px">
+    <h3 class="section-title">
+      <mat-icon>inventory_2</mat-icon>
+      Lista de Itens
+    </h3>
+
+    <!-- Filter and Search Bar -->
+    <div class="filters-bar nexa-card">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Pesquisar por nome ou SKU...</mat-label>
+        <input
+          matInput
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearchChange($event)"
+          placeholder="Ex: Produto X, SKU123..."
+        />
+      </mat-form-field>
+
+      <nexa-select label="Categoria" class="filter-field" [ngModel]="selectedCategoria()" (ngModelChange)="onCategoriaChange($event)">
+          <mat-option [value]="null">Todas as Categorias</mat-option>
+          @for (cat of categorias(); track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.nome }}</mat-option>
+          }
+        </nexa-select>
+    </div>
+
+    <!-- Complete Products List Table -->
+    <div class="table-container nexa-card">
+      <table mat-table [dataSource]="produtos()" class="nexa-table">
+        <!-- SKU Column -->
+        <ng-container matColumnDef="sku">
+          <th mat-header-cell *matHeaderCellDef>SKU</th>
+          <td mat-cell *matCellDef="let row" style="font-family: monospace; font-weight: 600">
+            {{ row.sku }}
+          </td>
+        </ng-container>
+
+        <!-- Nome Column -->
+        <ng-container matColumnDef="nome">
+          <th mat-header-cell *matHeaderCellDef>Nome do Produto</th>
+          <td mat-cell *matCellDef="let row" style="font-weight: 500">{{ row.nome }}</td>
+        </ng-container>
+
+        <!-- Categoria Column -->
+        <ng-container matColumnDef="categoria">
+          <th mat-header-cell *matHeaderCellDef class="hide-mobile">Categoria</th>
+          <td mat-cell *matCellDef="let row" class="hide-mobile">
+            {{ row.categoria?.nome || '—' }}
+          </td>
+        </ng-container>
+
+        <!-- Mínimo Column -->
+        <ng-container matColumnDef="estoqueMinimo">
+          <th mat-header-cell *matHeaderCellDef class="hide-mobile">Mínimo</th>
+          <td mat-cell *matCellDef="let row" class="hide-mobile">
+            {{ row.estoqueMinimo }} {{ row.unidade }}
+          </td>
+        </ng-container>
+
+        <!-- Atual Column -->
+        <ng-container matColumnDef="estoqueAtual">
+          <th mat-header-cell *matHeaderCellDef>Estoque Atual</th>
+          <td mat-cell *matCellDef="let row" style="font-weight: 600">
+            <span
+              [class.stock-low]="row.estoqueAtual * 1 <= row.estoqueMinimo * 1"
+              [class.stock-ok]="row.estoqueAtual * 1 > row.estoqueMinimo * 1"
+            >
+              {{ row.estoqueAtual }} {{ row.unidade }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let row">
+            <span
+              class="status-badge"
+              [class.inactive]="row.estoqueAtual * 1 <= row.estoqueMinimo * 1"
+              [class.active]="row.estoqueAtual * 1 > row.estoqueMinimo * 1"
+            >
+              {{ row.estoqueAtual * 1 <= row.estoqueMinimo * 1 ? 'Baixo' : 'Adequado' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Ações Column -->
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef style="text-align: right; padding-right: 24px">
+            Ações
+          </th>
+          <td mat-cell *matCellDef="let row" style="text-align: right; padding-right: 24px">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="openMovimentacao(row.id, row.nome)"
+              matTooltip="Movimentação / Ajuste"
+            >
+              <mat-icon>swap_vert</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              [color]="selectedProdutoId() === row.id ? 'warn' : 'accent'"
+              (click)="toggleHistorico(row.id, row.nome)"
+              matTooltip="Histórico de Auditoria"
+            >
+              <mat-icon>{{
+                selectedProdutoId() === row.id ? 'history_toggle_off' : 'history'
+              }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="productCols"></tr>
+        <tr mat-row *matRowDef="let row; columns: productCols" class="table-row"></tr>
+      </table>
+
+      <div *ngIf="produtos().length === 0 && !loading()" class="empty-state">
+        <mat-icon>inventory</mat-icon>
+        <h3>Nenhum produto encontrado</h3>
+        <p>Ajuste os filtros de pesquisa ou categoria.</p>
+      </div>
+
+      <mat-paginator
+        [length]="totalRecords()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[5, 10, 20]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+
+  <!-- SELECTED PRODUCT TRANSACTION HISTORY -->
+  <div class="history-section nexa-fade-in" *ngIf="selectedProdutoId()" style="margin-top: 32px">
+    <div class="page-header" style="margin-bottom: 16px">
+      <div class="header-left">
+        <h3 class="section-title" style="margin: 0">
+          <mat-icon color="accent">history</mat-icon>
+          Histórico de Movimentações —
+          <span class="nexa-gradient-text">{{ selectedProdutoNome() }}</span>
+        </h3>
+      </div>
+      <button mat-icon-button (click)="selectedProdutoId.set(null)" matTooltip="Fechar Histórico">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="table-container nexa-card">
+      <table mat-table [dataSource]="historico()" class="nexa-table">
+        <!-- Data Column -->
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>Data</th>
+          <td mat-cell *matCellDef="let row">{{ row.createdAt | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+        </ng-container>
+
+        <!-- Tipo Column -->
+        <ng-container matColumnDef="tipo">
+          <th mat-header-cell *matHeaderCellDef>Operação</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="tipo-badge" [class]="row.tipo.toLowerCase()">{{ row.tipo }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Quantidade Column -->
+        <ng-container matColumnDef="quantidade">
+          <th mat-header-cell *matHeaderCellDef>Qtd Movimentada</th>
+          <td mat-cell *matCellDef="let row" style="font-weight: 600">
+            <span
+              [class.stock-low]="row.tipo === 'SAIDA' || row.tipo === 'VENDA'"
+              [class.stock-ok]="row.tipo === 'ENTRADA' || row.tipo === 'COMPRA'"
+            >
+              {{ row.tipo === 'SAIDA' || row.tipo === 'VENDA' ? '-' : '+' }}{{ row.quantidade }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Movimentação Column -->
+        <ng-container matColumnDef="movimento">
+          <th mat-header-cell *matHeaderCellDef class="hide-mobile">Alteração de Estoque</th>
+          <td mat-cell *matCellDef="let row" class="hide-mobile" style="color: #acacac">
+            {{ row.quantidadeAnt }}
+            <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle"
+              >arrow_forward</mat-icon
+            >
+            {{ row.quantidadeNova }}
+          </td>
+        </ng-container>
+
+        <!-- Motivo Column -->
+        <ng-container matColumnDef="motivo">
+          <th mat-header-cell *matHeaderCellDef class="hide-mobile">Motivo / Descrição</th>
+          <td mat-cell *matCellDef="let row" class="hide-mobile">{{ row.motivo || '—' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="histCols"></tr>
+        <tr mat-row *matRowDef="let row; columns: histCols" class="table-row"></tr>
+      </table>
+
+      <div *ngIf="historico().length === 0" class="empty-state">
+        <mat-icon>history</mat-icon>
+        <p>Nenhuma movimentação registrada para este produto.</p>
+      </div>
+
+      <mat-paginator
+        [length]="histTotal()"
+        [pageSize]="10"
+        (page)="onHistPage($event)"
+        showFirstLastButtons
+      ></mat-paginator>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 2. REPLENISHMENT REPORT TAB                                              -->
+<!-- ========================================================================= -->
+<div *ngIf="activeTab() === 'reposicao'" class="nexa-fade-in">
+  <div class="inventory-section">
+    <h3 class="section-title">
+      <mat-icon color="warn">build_circle</mat-icon>
+      Sugestão de Reposição de Estoque Crítico
+    </h3>
+    <p
+      class="section-subtitle"
+      style="margin-bottom: 24px; color: var(--nexa-text-secondary); max-width: 800px"
+    >
+      O Nexa analisa todos os produtos cujos níveis de estoque atual são inferiores ou iguais ao
+      limite mínimo estabelecido. O sistema sugere compras baseadas no dobro do estoque mínimo para
+      evitar rupturas operacionais, preenchendo automaticamente o último fornecedor e o último preço
+      praticado.
+    </p>
+
+    <!-- Replenishment Options & Generator Bar -->
+    <div
+      class="filters-bar reposicao-bar"
+      style="
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--nexa-border);
+        border-radius: 12px;
+        padding: 16px;
+        align-items: center;
+        justify-content: space-between;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+        box-sizing: border-box;
+        max-width: 100%;
+      "
+    >
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div
+          class="selected-count-badge"
+          style="
+            background: var(--nexa-primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(248, 148, 24, 0.25);
+          "
+        >
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px">shopping_cart</mat-icon>
+          {{ selectedItemsCount() }} item(ns) selecionado(s)
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap">
+        <ng-container *ngIf="hasFornecedores()">
+          @if (hasFornecedores()) {
+            <nexa-select label="Fornecedor do Pedido de Compra" class="no-bottom-padding" style="width: 320px; margin-bottom: 0"
+                [ngModel]="selectedFornecedorId()"
+                (ngModelChange)="selectedFornecedorId.set($event)"
+              >
+                <mat-option [value]="null">Selecione um fornecedor...</mat-option>
+                @for (forn of fornecedores(); track forn.id) {
+                  <mat-option [value]="forn.id">{{ forn.nome }}</mat-option>
+                }
+              </nexa-select>
+
+            <button
+              mat-flat-button
+              color="primary"
+              style="height: 48px; font-weight: 600; border-radius: 8px"
+              [disabled]="selectedItemsCount() === 0 || !selectedFornecedorId()"
+              (click)="gerarCompra()"
+            >
+              <mat-icon style="margin-right: 8px">playlist_add_check</mat-icon>
+              Gerar Compra em Rascunho
+            </button>
+          }
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Replenishment HTML Table -->
+    <div class="table-container nexa-card">
+      <table class="nexa-table reposicao-table" style="width: 100%; border-collapse: collapse">
+        <thead>
+          <tr
+            style="
+              text-align: left;
+              border-bottom: 1px solid var(--nexa-border);
+              padding: 12px 16px;
+            "
+          >
+            <th style="width: 48px; text-align: center; padding: 16px 8px">
+              <mat-checkbox
+                [checked]="selectAllChecked()"
+                (change)="toggleSelectAll($event.checked)"
+              ></mat-checkbox>
+            </th>
+            <th style="padding: 16px 8px">SKU</th>
+            <th style="padding: 16px 8px">Nome do Produto</th>
+            <th style="padding: 16px 8px">Categoria</th>
+            <th style="text-align: right; padding: 16px 8px">Estoque Atual</th>
+            <th style="text-align: right; padding: 16px 8px">Estoque Mínimo</th>
+            <th style="text-align: right; padding: 16px 8px">Sugerido</th>
+            <th style="width: 130px; text-align: center; padding: 16px 8px">Qtd a Comprar</th>
+            <th style="text-align: right; padding: 16px 8px">Último Preço</th>
+            <th *ngIf="hasFornecedores()" style="padding: 16px 16px">Último Fornecedor</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of reposicaoItens(); track item.produtoId) {
+            <tr
+              style="border-bottom: 1px solid var(--nexa-border); transition: background 0.2s"
+              [style.background]="item.selected ? 'rgba(248, 148, 24, 0.04)' : 'transparent'"
+            >
+              <td style="text-align: center; padding: 12px 8px">
+                <mat-checkbox
+                  [(ngModel)]="item.selected"
+                  (change)="onItemSelectionChange()"
+                ></mat-checkbox>
+              </td>
+              <td
+                style="
+                  font-family: monospace;
+                  font-weight: 600;
+                  padding: 12px 8px;
+                  color: var(--nexa-primary);
+                "
+              >
+                {{ item.sku }}
+              </td>
+              <td style="font-weight: 500; padding: 12px 8px">{{ item.nome }}</td>
+              <td style="padding: 12px 8px; color: var(--nexa-text-secondary)">
+                {{ item.categoriaNome }}
+              </td>
+              <td style="text-align: right; padding: 12px 8px; font-weight: 600" class="stock-low">
+                {{ item.estoqueAtual }} {{ item.unidade }}
+              </td>
+              <td style="text-align: right; padding: 12px 8px; color: var(--nexa-text-muted)">
+                {{ item.estoqueMinimo }} {{ item.unidade }}
+              </td>
+              <td style="text-align: right; padding: 12px 8px; font-weight: 600; color: #4caf50">
+                {{ item.sugestaoRepor }} {{ item.unidade }}
+              </td>
+              <td style="text-align: center; padding: 12px 8px">
+                <input
+                  type="number"
+                  [(ngModel)]="item.quantidadeAComprar"
+                  min="0.1"
+                  step="0.1"
+                  style="
+                    width: 90px;
+                    text-align: center;
+                    background: rgba(255, 255, 255, 0.05);
+                    color: var(--nexa-text);
+                    border: 1px solid var(--nexa-border);
+                    border-radius: 6px;
+                    padding: 6px;
+                    font-weight: 600;
+                  "
+                />
+              </td>
+              <td
+                style="
+                  text-align: right;
+                  padding: 12px 8px;
+                  color: var(--nexa-text-secondary);
+                  font-weight: 500;
+                "
+              >
+                {{ item.ultimoPrecoCompra ? (item.ultimoPrecoCompra | currency: 'BRL') : '—' }}
+              </td>
+              <td *ngIf="hasFornecedores()" style="padding: 12px 16px">
+                <span
+                  class="supplier-badge"
+                  [class.has-supplier]="item.ultimoFornecedorId"
+                  (click)="
+                    item.ultimoFornecedorId && selectedFornecedorId.set(item.ultimoFornecedorId)
+                  "
+                  [matTooltip]="
+                    item.ultimoFornecedorId
+                      ? 'Clique para selecionar este fornecedor para o pedido de compra'
+                      : 'Sem histórico de fornecedor'
+                  "
+                  [style.cursor]="item.ultimoFornecedorId ? 'pointer' : 'default'"
+                  [style.border-style]="item.ultimoFornecedorId ? 'solid' : 'dashed'"
+                  [style.opacity]="item.ultimoFornecedorId ? '1' : '0.65'"
+                  style="
+                    padding: 4px 10px;
+                    border-radius: 12px;
+                    font-size: 12px;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid var(--nexa-border);
+                    color: var(--nexa-text-secondary);
+                    display: inline-block;
+                  "
+                >
+                  {{ item.ultimoFornecedorNome }}
+                </span>
+              </td>
+            </tr>
+          }
+          <tr *ngIf="reposicaoItens().length === 0 && !loadingReposicao()">
+            <td colspan="10" style="padding: 64px; text-align: center;">
+              <div class="empty-state" style="padding: 0; background: transparent; border: none; box-shadow: none;">
+                <mat-icon
+                  style="
+                    font-size: 56px;
+                    width: 56px;
+                    height: 56px;
+                    color: #4caf50;
+                    margin-bottom: 16px;
+                  "
+                  >check_circle</mat-icon
+                >
+                <h3>Estoque 100% Adequado!</h3>
+                <p style="color: var(--nexa-text-secondary)">
+                  Nenhum produto está abaixo do limite de estoque mínimo no momento.
+                </p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="loadingReposicao()" style="padding: 64px; text-align: center">
+        <p style="color: var(--nexa-text-secondary)">
+          Buscando produtos abaixo do limite crítico...
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

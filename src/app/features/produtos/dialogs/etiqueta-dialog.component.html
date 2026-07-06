@@ -1,0 +1,74 @@
+<h2 mat-dialog-title class="dialog-title-gradient">
+  <mat-icon>qr_code</mat-icon>
+  <span>Gerador de Etiquetas de Código de Barras</span>
+</h2>
+
+<mat-dialog-content class="mat-typography dialog-form-content">
+  <div class="etiquetas-dialog-layout">
+    
+    <!-- Descrição -->
+    <p class="section-description">
+      Defina a quantidade de etiquetas que deseja emitir para o produto <strong>{{ data.produto.nome }}</strong>. O layout está otimizado para impressoras térmicas padrão de etiquetas.
+    </p>
+
+    <!-- Seletor de Quantidade Premium -->
+    <div class="quantity-selector-panel">
+      <span class="quantity-label">Quantidade de Etiquetas (Cópias):</span>
+      <div class="quantity-controls">
+        <button mat-icon-button color="primary" (click)="decrement()" matTooltip="Diminuir cópia">
+          <mat-icon>remove_circle_outline</mat-icon>
+        </button>
+        <input type="number" 
+               class="quantity-input" 
+               [ngModel]="quantidade()" 
+               (ngModelChange)="quantidade.set($event > 0 ? $event : 1)" 
+               min="1" />
+        <button mat-icon-button color="primary" (click)="increment()" matTooltip="Aumentar cópia">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Preview Label Sheet (Dual-purpose: Screen preview + Print Area) -->
+    <div class="preview-scroll-container">
+      <span class="preview-badge">Pré-visualização da Folha de Etiquetas</span>
+      
+      <!-- A folha que será impressa (print-area) -->
+      <div class="etiquetas-print-sheet print-area" id="printable-labels-sheet">
+        @for (item of etiquetasArray(); track $index) {
+          <div class="etiqueta-card">
+            <div class="etiqueta-header">
+              <span class="brand-sub">NEXA ERP</span>
+              <span class="sku-sub">SKU: {{ data.produto.sku }}</span>
+            </div>
+            
+            <div class="etiqueta-title">
+              {{ data.produto.nome }}
+            </div>
+            
+            <!-- Renderização NATIVA do Código de Barras via Google Font -->
+            <div class="etiqueta-barcode">
+              *{{ data.produto.codigoBarras }}*
+            </div>
+            
+            <div class="etiqueta-footer">
+              <span class="barcode-text">{{ data.produto.codigoBarras }}</span>
+              <span class="price-tag">R$ {{ data.produto.precoVenda | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions-padding">
+  <button mat-button mat-dialog-close>Fechar</button>
+  <button mat-raised-button color="primary" 
+          (click)="imprimir()" 
+          class="btn-primary-gradient">
+    <mat-icon>print</mat-icon>
+    Imprimir Etiquetas
+  </button>
+</mat-dialog-actions>

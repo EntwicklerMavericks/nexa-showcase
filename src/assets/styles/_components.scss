@@ -1,0 +1,2767 @@
+// =============================================================================
+// Nexa ERP — UI Components, Material Overrides & Badges
+// =============================================================================
+
+// ─── Browser Autofill Override ───────────────────────────────────────────────
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+// ─── Angular Material Overrides ──────────────────────────────────────────────
+
+// Force overlay background and text (Dropdowns, Menus, Autocomplete)
+.cdk-overlay-container, .cdk-overlay-pane {
+  z-index: 2000 !important;
+
+  .mat-mdc-menu-panel, .mat-mdc-select-panel, .mdc-menu-surface, .mat-mdc-autocomplete-panel {
+    background-color: #1a1a1a !important; // Solid elevated background
+    background: #1a1a1a !important;
+    border: 1px solid #333333 !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8) !important;
+    
+    .mat-mdc-menu-item, .mat-mdc-option, .mdc-list-item {
+      color: #ffffff !important;
+      
+      .mat-mdc-option-text, .mdc-list-item__primary-text {
+        color: #ffffff !important;
+      }
+
+      &:hover:not([disabled]) {
+        background-color: #282828 !important;
+      }
+      
+      &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+        background-color: rgba(248, 148, 24, 0.15) !important;
+        .mdc-list-item__primary-text { color: var(--nexa-primary) !important; }
+      }
+    }
+  }
+}
+
+// Global Form Fields Overrides
+.mat-mdc-form-field {
+  width: 100%;
+  
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+    border-color: #333333 !important;
+  }
+
+  &:hover .mdc-notched-outline__leading,
+  &:hover .mdc-notched-outline__notch,
+  &:hover .mdc-notched-outline__trailing {
+    border-color: #464646 !important;
+  }
+
+  &.mat-focused .mdc-notched-outline__leading,
+  &.mat-focused .mdc-notched-outline__notch,
+  &.mat-focused .mdc-notched-outline__trailing {
+    border-color: var(--nexa-primary) !important;
+  }
+
+  // Label and Placeholder color (Forced White)
+  .mdc-floating-label, .mat-mdc-form-field-label, .mat-mdc-floating-label, .mat-mdc-select-placeholder {
+    color: #acacac !important;
+  }
+  
+  &.mat-focused .mdc-floating-label {
+    color: var(--nexa-primary) !important;
+  }
+
+  // Floating state
+  .mdc-floating-label--float-above {
+    color: #ffffff !important;
+  }
+
+  // Input text color
+  input.mat-mdc-input-element, .mat-mdc-select-value-text, textarea.mat-mdc-input-element, .mat-mdc-select-value {
+    color: #ffffff !important;
+  }
+
+  // Icons inside fields
+  .mat-icon, [matPrefix], [matSuffix] {
+    color: #ffffff !important;
+  }
+}
+
+// Dialog Global Styling
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+
+  // Make the Angular host component take full height and act as a flex column
+  > * {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto;
+    height: 100%;
+  }
+}
+
+.mat-mdc-dialog-title, .dialog-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  padding: 24px 24px 16px 24px !important;
+  color: #ffffff !important;
+  mat-icon { color: var(--nexa-primary) !important; }
+  flex-shrink: 0 !important;
+}
+
+// Dialog Surface Content Fix
+.mat-mdc-dialog-content {
+  color: #ffffff !important;
+  padding: 24px !important;
+
+  // Force all fields inside dialog to have white text and labels
+  .mat-mdc-form-field {
+    .mdc-floating-label, .mat-mdc-floating-label, .mdc-text-field--outlined .mdc-floating-label--float-above {
+      color: #ffffff !important;
+    }
+    input, .mat-mdc-select-value-text, textarea {
+      color: #ffffff !important;
+    }
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100% !important;
+  box-sizing: border-box;
+  min-width: 0;
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 16px 24px !important;
+  border-top: 1px solid #333333 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  margin-bottom: 0 !important;
+  min-height: auto !important;
+  flex-shrink: 0 !important;
+}
+
+// Mobile Dialogs (95vw centered)
+@media (max-width: 768px) {
+  .cdk-overlay-pane {
+    width: 95vw !important;
+    height: auto !important;
+    max-width: 95vw !important;
+    max-height: 95vh !important;
+    position: relative !important;
+    margin: auto !important;
+  }
+  
+  .mat-mdc-dialog-container {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 95vh !important;
+  }
+
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 95vh !important;
+    border-radius: 12px !important;
+    border: none !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .mat-mdc-dialog-title, .dialog-title { 
+    padding: 16px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .mat-mdc-dialog-content { 
+    padding: 0 16px 16px 16px !important;
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+  }
+  
+  .mat-mdc-dialog-actions { 
+    padding: 16px !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+// Force button text contrast - ULTRA AGGRESSIVE
+.mat-mdc-flat-button.mat-primary, .mat-mdc-raised-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary {
+  background-color: var(--nexa-primary) !important;
+  .mdc-button__label {
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+  mat-icon { color: #000000 !important; }
+}
+
+.mat-mdc-button:not(.mat-primary) .mdc-button__label {
+  color: #ffffff !important;
+}
+
+.mat-mdc-outlined-button {
+  border-color: #333333 !important;
+  color: #ffffff !important;
+  
+  &:hover {
+    background-color: #282828 !important;
+    border-color: #444444 !important;
+  }
+}
+
+// Paginator fixes
+.mat-mdc-paginator {
+  background: transparent !important;
+  color: #ffffff !important;
+  position: sticky;
+  left: 0; // Keep visible during horizontal scroll
+
+  .mat-mdc-paginator-container {
+    @media (max-width: 768px) {
+      justify-content: center !important;
+      flex-wrap: wrap; // Allows stacking on very small screens
+      height: auto !important;
+      min-height: 56px;
+      padding: 8px 0 !important;
+    }
+  }
+
+  .mat-mdc-paginator-range-label, .mat-mdc-paginator-page-size-label {
+    color: #ffffff !important;
+  }
+  
+  .mat-mdc-select-value {
+    color: #ffffff !important;
+  }
+  
+  button.mat-mdc-icon-button {
+    color: #ffffff !important;
+    &:disabled {
+      color: #464646 !important;
+    }
+  }
+}
+
+// Custom tabs navigation overrides
+.mat-mdc-tab-header {
+  border-bottom: 1px solid #282828 !important;
+  margin-bottom: 20px !important;
+}
+.mat-mdc-tab-link, .mat-mdc-tab {
+  color: #acacac !important;
+  opacity: 1 !important;
+  font-weight: 500 !important;
+  &.mdc-tab--active {
+    color: var(--nexa-primary) !important;
+    .mdc-tab__text-label { color: var(--nexa-primary) !important; }
+  }
+}
+
+// ─── Custom UI Layout Classes ───────────────────────────────────────────────
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    
+    .record-count {
+      font-size: 13px;
+      color: #acacac;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    button { width: 100%; }
+  }
+}
+
+.filters-bar {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px 0;
+  margin-bottom: 16px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #282828;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    max-width: 400px;
+    .mat-mdc-form-field-subscript-wrapper { display: none; }
+  }
+
+  .filter-field {
+    width: 200px;
+    .mat-mdc-form-field-subscript-wrapper { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding-top: 16px;
+    .search-field, .filter-field {
+      max-width: none;
+      width: 100%;
+    }
+    button { width: 100%; }
+  }
+}
+
+.nexa-card {
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  max-width: 100%;
+  @media (max-width: 600px) { padding: 16px; }
+}
+
+// Custom Dark Table Structure
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #1a1a1a;
+  border: 1px solid #282828;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+
+  &::-webkit-scrollbar { height: 8px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }
+  &::-webkit-scrollbar-thumb:hover { background: #555555; }
+}
+
+.nexa-table {
+  width: 100%;
+  min-width: 700px; // Forces scrolling on mobile
+  border-collapse: collapse;
+
+  th, td {
+    padding: 14px 16px;
+    text-align: left;
+  }
+
+  th {
+    background: #222222;
+    font-weight: 600 !important;
+    color: #acacac !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    color: #f1f1f1 !important;
+    border-bottom: 1px solid #333 !important;
+    font-size: 14px;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    
+    &.active {
+      background: rgba(76, 175, 80, 0.15);
+      color: #4caf50;
+    }
+    
+    &.inactive {
+      background: rgba(244, 67, 54, 0.15);
+      color: #f44336;
+    }
+  }
+
+  .actions-cell {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  gap: 16px;
+  color: #ffffff;
+  text-align: center;
+  width: 100%;
+  position: sticky;
+  left: 0; // Keep visible during horizontal scroll
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    opacity: 0.3;
+    color: var(--nexa-primary) !important;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    color: #ffffff;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: #ffffff !important;
+  }
+}
+
+.tab-content {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 800px;
+  max-width: 100%;
+  @media (max-width: 850px) { width: 100%; }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  
+  .flex-1 { flex: 1; }
+  .flex-2 { flex: 2; }
+  
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 0;
+    .flex-1, .flex-2 { width: 100%; }
+  }
+}
+
+.hide-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.nexa-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nexa-gradient-text {
+  background: linear-gradient(135deg, #f89418, #ffb86b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// ─── NF-e Specific Components ───────────────────────────────────────────────
+
+.status-rascunho {
+  background: rgba(255, 193, 7, 0.15) !important;
+  color: #ffc107 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-autorizada {
+  background: rgba(76, 175, 80, 0.15) !important;
+  color: #4caf50 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-cancelada {
+  background: rgba(244, 67, 54, 0.15) !important;
+  color: #f44336 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-rejeitada {
+  background: rgba(156, 39, 176, 0.15) !important;
+  color: #ce93d8 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  h3 { margin: 0; font-size: 16px; font-weight: 600; color: #ffffff; }
+}
+
+.item-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #282828;
+  
+  &:last-child { border-bottom: none; }
+  .flex-1 { flex: 1; }
+  .flex-2 { flex: 2; }
+  button { margin-top: 8px; }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    .flex-1, .flex-2 { width: 100%; flex: none; }
+    button { width: 100%; margin-top: 0; }
+  }
+}
+
+.values-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+
+  .value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #222222;
+    border-radius: 8px;
+    
+    .value-label { font-size: 14px; color: #acacac; }
+    .value-amount { font-size: 18px; font-weight: 700; color: #ffffff; }
+    
+    &.total {
+      background: #1a1a1a;
+      border: 1px solid var(--nexa-primary);
+      .value-amount { font-size: 22px; }
+    }
+  }
+}
+
+// ─── Backoffice & User Custom Cells ──────────────────────────────────────────
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .user-cell-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; 
+    background: #333333;
+    color: #ffffff; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid #444444;
+  }
+}
+
+.role-chip {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  
+  &.role-super { background: rgba(156, 39, 176, 0.15); color: #ce93d8; }
+  &.role-admin { background: rgba(33, 150, 243, 0.15); color: #90caf9; }
+  &.role-gerente { background: rgba(255, 152, 0, 0.15); color: #ffcc80; }
+  &.role-vendedor { background: rgba(76, 175, 80, 0.15); color: #a5d6a7; }
+  &.role-caixa { background: rgba(158, 158, 158, 0.15); color: #e0e0e0; }
+}
+
+// ─── Estoque / Inventory Module Styles ────────────────────────────────────────
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 16px;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.alerts-section {
+  margin-bottom: 24px;
+}
+
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.alert-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px !important;
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  transition: transform 200ms ease, border-color 200ms ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--nexa-primary);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #f44336;
+  }
+
+  .alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .sku-cell {
+      font-family: monospace;
+      font-size: 11px;
+      color: #acacac;
+      background: #282828;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .alert-cat {
+      font-size: 11px;
+      color: var(--nexa-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+  }
+
+  .alert-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 16px;
+    line-height: 1.4;
+    height: 40px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .alert-stock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #131313;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #222222;
+
+    .stock-numbers {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+
+      .current {
+        font-size: 22px;
+        font-weight: 800;
+      }
+      
+      .separator {
+        color: #555555;
+        font-size: 16px;
+        margin: 0 4px;
+      }
+
+      .minimum {
+        font-size: 14px;
+        color: #777777;
+        font-weight: 500;
+      }
+    }
+
+    .stock-label {
+      font-size: 10px;
+      color: #777777;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+  }
+
+  .adjust-btn {
+    width: 100%;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 4px;
+    }
+  }
+}
+
+.no-alerts {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background: #1a1a1a;
+  border: 1px solid #282828;
+  border-radius: 12px;
+  margin-bottom: 24px;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #4caf50 !important;
+  }
+
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #acacac;
+  }
+}
+
+// Stock highlighting colors
+.stock-low {
+  color: #ff9800 !important;
+  text-shadow: 0 0 8px rgba(255, 152, 0, 0.15);
+}
+
+.stock-ok {
+  color: #4caf50 !important;
+  text-shadow: 0 0 8px rgba(76, 175, 80, 0.15);
+}
+
+// Transaction pill badges (tipo-badge)
+.tipo-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.entrada, &.compra {
+    background: rgba(76, 175, 80, 0.15) !important;
+    color: #4caf50 !important;
+  }
+
+  &.saida, &.venda {
+    background: rgba(244, 67, 54, 0.15) !important;
+    color: #f44336 !important;
+  }
+
+  &.ajuste {
+    background: rgba(33, 150, 243, 0.15) !important;
+    color: #2196f3 !important;
+  }
+
+  &.devolucao {
+    background: rgba(255, 193, 7, 0.15) !important;
+    color: #ffc107 !important;
+  }
+}
+
+// Active button styling for toggled history
+button.active-hist {
+  background-color: rgba(248, 148, 24, 0.1) !important;
+  color: var(--nexa-primary) !important;
+}
+
+// Vendas & Clientes Specific Badges
+.status-confirmada {
+  background: rgba(33, 150, 243, 0.15) !important;
+  color: #2196f3 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-faturada {
+  background: rgba(76, 175, 80, 0.15) !important;
+  color: #4caf50 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tipo-pf {
+  background: rgba(33, 150, 243, 0.15) !important;
+  color: #2196f3 !important;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tipo-pj {
+  background: rgba(248, 148, 24, 0.15) !important;
+  color: var(--nexa-primary) !important;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pagamento-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  border: 1px solid #333333;
+}
+
+// ─── Módulo Financeiro — Estilos Premium ────────────────────────────────────
+
+.financeiro-container {
+  animation: fadeIn 0.4s ease-out;
+}
+
+// KPI Grid
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.kpi-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 250ms ease, box-shadow 250ms ease;
+  animation: kpiSlideIn 0.5s ease-out backwards;
+
+  &:nth-child(1) { animation-delay: 0.05s; }
+  &:nth-child(2) { animation-delay: 0.10s; }
+  &:nth-child(3) { animation-delay: 0.15s; }
+  &:nth-child(4) { animation-delay: 0.20s; }
+  &:nth-child(5) { animation-delay: 0.25s; }
+  &:nth-child(6) { animation-delay: 0.30s; }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .kpi-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  .kpi-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 1;
+
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #acacac;
+    }
+
+    .kpi-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+  }
+
+  .kpi-glow {
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  // Variantes de cor
+  &.kpi-orange {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.08), rgba(255, 193, 7, 0.04));
+    border-color: rgba(255, 152, 0, 0.15);
+    .kpi-icon-wrap {
+      background: rgba(255, 152, 0, 0.15);
+      mat-icon { color: #ff9800 !important; }
+    }
+    .kpi-glow { background: #ff9800; }
+  }
+
+  &.kpi-green {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(129, 199, 132, 0.04));
+    border-color: rgba(76, 175, 80, 0.15);
+    .kpi-icon-wrap {
+      background: rgba(76, 175, 80, 0.15);
+      mat-icon { color: #4caf50 !important; }
+    }
+    .kpi-glow { background: #4caf50; }
+  }
+
+  &.kpi-red {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.08), rgba(239, 83, 80, 0.04));
+    border-color: rgba(244, 67, 54, 0.15);
+    .kpi-icon-wrap {
+      background: rgba(244, 67, 54, 0.15);
+      mat-icon { color: #f44336 !important; }
+    }
+    .kpi-glow { background: #f44336; }
+  }
+}
+
+@keyframes kpiSlideIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// Card Saldo do Caixa
+.saldo-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: kpiSlideIn 0.6s ease-out 0.35s backwards;
+  text-align: center;
+
+  .saldo-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #acacac;
+    }
+  }
+
+  .saldo-valor {
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .saldo-subtitle {
+    font-size: 12px;
+    color: #777777;
+  }
+
+  .saldo-glow {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 120px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  &.saldo-positivo {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.06), rgba(56, 142, 60, 0.03));
+    border: 1px solid rgba(76, 175, 80, 0.2);
+
+    .saldo-header mat-icon { color: #4caf50 !important; }
+    .saldo-valor {
+      background: linear-gradient(135deg, #4caf50, #81c784);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .saldo-glow { background: #4caf50; }
+  }
+
+  &.saldo-negativo {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.06), rgba(211, 47, 47, 0.03));
+    border: 1px solid rgba(244, 67, 54, 0.2);
+
+    .saldo-header mat-icon { color: #f44336 !important; }
+    .saldo-valor {
+      background: linear-gradient(135deg, #f44336, #ef5350);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .saldo-glow { background: #f44336; }
+  }
+
+  @media (max-width: 600px) {
+    padding: 24px 16px;
+    .saldo-valor { font-size: 28px; }
+  }
+}
+
+// Seção Vencimentos
+.vencimentos-section {
+  margin-top: 8px;
+}
+
+.dashboard-content {
+  padding-top: 24px;
+}
+
+.tab-panel {
+  padding-top: 24px;
+}
+
+// Status Badges — Financeiro
+.status-pendente {
+  background: rgba(255, 152, 0, 0.15) !important;
+  color: #ff9800 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pago {
+  background: rgba(76, 175, 80, 0.15) !important;
+  color: #4caf50 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-atrasado {
+  background: rgba(244, 67, 54, 0.15) !important;
+  color: #f44336 !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-cancelado {
+  background: rgba(158, 158, 158, 0.15) !important;
+  color: #9e9e9e !important;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// Tipo badges — Financeiro vencimentos
+.tipo-receber {
+  background: rgba(76, 175, 80, 0.15) !important;
+  color: #4caf50 !important;
+}
+
+.tipo-pagar {
+  background: rgba(244, 67, 54, 0.15) !important;
+  color: #f44336 !important;
+}
+
+// ─── Módulo de Relatórios & BI — Estilos Ultra Premium ──────────────────────
+
+.relatorios-container {
+  animation: fadeIn 0.4s ease-out;
+
+  .reload-btn {
+    height: 48px;
+    padding: 0 24px;
+    border-radius: 8px;
+    
+    mat-icon {
+      margin-right: 6px;
+    }
+  }
+}
+
+.bi-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  gap: 20px;
+  color: var(--nexa-text-secondary);
+
+  .bi-loader {
+    width: 48px;
+    height: 48px;
+    border: 3.5px solid rgba(248, 148, 24, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--nexa-primary);
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+.bi-grid-layout {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+
+  &.bottom-row {
+    grid-template-columns: 1fr 1fr;
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.bi-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 320px;
+
+  .block-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--nexa-text, #ffffff);
+    border-bottom: 1px solid var(--nexa-border, #282828);
+    padding-bottom: 12px;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      color: var(--nexa-primary) !important;
+    }
+  }
+}
+
+// DRE Gerencial Contábil
+.dre-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--nexa-border, #222222);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--nexa-border, #282828);
+
+  .dre-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 16px;
+    background: var(--nexa-surface, #1a1a1a);
+    font-size: 13.5px;
+    color: var(--nexa-text, #dfdfdf);
+
+    .val {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--nexa-text, #ffffff);
+
+      &.positive { color: #81c784; }
+      &.negative { color: #ef5350; }
+    }
+
+    &.header-row {
+      background: var(--nexa-surface-light, #242424);
+      font-weight: 600;
+      color: var(--nexa-text, #ffffff);
+      border-bottom: 1px solid var(--nexa-border, #2d2d2d);
+    }
+
+    &.sub-row {
+      padding-left: 28px;
+      font-size: 12.5px;
+      color: var(--nexa-text-secondary, #acacac);
+    }
+
+    &.highlight-row {
+      background: var(--nexa-surface-light, rgba(255, 255, 255, 0.015));
+      border-top: 1px solid var(--nexa-border, #252525);
+      border-bottom: 1px solid var(--nexa-border, #252525);
+    }
+
+    &.total-row {
+      background: var(--nexa-surface-light, #202020);
+      font-weight: 700;
+      color: var(--nexa-text, #ffffff);
+      border-top: 1px solid var(--nexa-border, #333333);
+      border-bottom: 1px solid var(--nexa-border, #333333);
+    }
+
+    &.meta-row {
+      background: var(--nexa-surface, #141414);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--nexa-text-secondary, #888888);
+      padding: 6px 16px 6px 28px;
+    }
+
+    &.final-result-row {
+      background: var(--nexa-surface, #1a1a1a);
+      font-weight: 800;
+      font-size: 14px;
+      padding: 16px;
+      border-top: 2px solid var(--nexa-border, #333333);
+
+      &.positive-balance {
+        background: linear-gradient(90deg, rgba(76, 175, 80, 0.08), rgba(76, 175, 80, 0.01));
+        border-top-color: rgba(76, 175, 80, 0.3);
+        border-bottom: 2px solid rgba(76, 175, 80, 0.3);
+        .val {
+          color: #4caf50;
+          font-size: 18px;
+        }
+      }
+
+      &.negative-balance {
+        background: linear-gradient(90deg, rgba(244, 67, 54, 0.08), rgba(244, 67, 54, 0.01));
+        border-top-color: rgba(244, 67, 54, 0.3);
+        border-bottom: 2px solid rgba(244, 67, 54, 0.3);
+        .val {
+          color: #f44336;
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+// SVG Line Chart
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 10px;
+
+  .svg-container {
+    position: relative;
+    width: 100%;
+
+    .svg-line-chart {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    .chart-node {
+      fill: #f89418;
+      stroke: #1a1a1a;
+      stroke-width: 2px;
+      cursor: pointer;
+      transition: r 0.2s ease, fill 0.2s ease;
+
+      &:hover {
+        r: 9px;
+        fill: #ffffff;
+      }
+    }
+
+    .chart-dates-axis {
+      position: relative;
+      width: 100%;
+      height: 24px;
+      margin-top: 8px;
+
+      span {
+        position: absolute;
+        transform: translateX(-50%);
+        font-size: 10px;
+        color: #888888;
+        font-weight: 500;
+      }
+    }
+
+    .chart-tooltip-floating {
+      position: absolute;
+      width: 140px;
+      background: rgba(20, 20, 20, 0.85);
+      border: 1px solid var(--nexa-primary);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      z-index: 10;
+      pointer-events: none;
+      animation: tooltipPop 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      .tooltip-date {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #888888;
+        font-weight: 600;
+      }
+
+      .tooltip-val {
+        font-size: 14px;
+        font-weight: 700;
+        color: #ffffff;
+        font-family: monospace;
+      }
+
+      .tooltip-qty {
+        font-size: 11px;
+        color: #acacac;
+      }
+    }
+  }
+
+  .chart-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 32px;
+    gap: 12px;
+    color: #acacac;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      opacity: 0.3;
+      color: var(--nexa-primary) !important;
+    }
+  }
+}
+
+@keyframes tooltipPop {
+  from { opacity: 0; transform: translateY(6px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// Top Produtos abc List
+.top-produtos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  .top-product-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .item-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      .product-name {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        color: #ffffff;
+
+        .rank-badge {
+          width: 20px;
+          height: 20px;
+          border-radius: 4px;
+          background: rgba(255, 255, 255, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 700;
+          color: var(--nexa-primary);
+        }
+      }
+
+      .product-revenue {
+        font-size: 13.5px;
+        font-family: monospace;
+        font-weight: 700;
+        color: #ffffff;
+      }
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+
+      .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--nexa-primary), #ffb86b);
+        border-radius: 3px;
+        box-shadow: 0 0 10px rgba(248, 148, 24, 0.3);
+        transition: width 0.8s ease-out;
+      }
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: #888888;
+      
+      .sku {
+        font-family: monospace;
+      }
+    }
+  }
+}
+
+// Fluxo de Caixa Comparativo
+.fluxo-comparativo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  flex: 1;
+
+  .fluxo-bars-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 190px;
+    width: 100%;
+    border-bottom: 1px solid #333333;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    gap: 8px;
+
+    &::-webkit-scrollbar { height: 4px; }
+    &::-webkit-scrollbar-thumb { background: #333333; border-radius: 2px; }
+
+    .fluxo-bar-day {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 28px;
+      gap: 8px;
+      cursor: pointer;
+
+      &:hover {
+        .bars-pair {
+          .bar-receita-fill { filter: brightness(1.2); }
+          .bar-despesa-fill { filter: brightness(1.2); }
+        }
+      }
+
+      .bars-pair {
+        display: flex;
+        align-items: flex-end;
+        gap: 2.5px;
+        height: 160px;
+        width: 100%;
+        justify-content: center;
+
+        .bar-receita-fill {
+          width: 8px;
+          border-radius: 2px 2px 0 0;
+          background: linear-gradient(180deg, #81c784, #4caf50);
+          box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+          transition: height 0.4s ease-out, filter 0.2s ease;
+          
+          &.no-val {
+            height: 1.5px !important;
+            background: #252525;
+            box-shadow: none;
+          }
+        }
+
+        .bar-despesa-fill {
+          width: 8px;
+          border-radius: 2px 2px 0 0;
+          background: linear-gradient(180deg, #ef5350, #f44336);
+          box-shadow: 0 0 8px rgba(244, 67, 54, 0.2);
+          transition: height 0.4s ease-out, filter 0.2s ease;
+
+          &.no-val {
+            height: 1.5px !important;
+            background: #252525;
+            box-shadow: none;
+          }
+        }
+      }
+
+      .day-label {
+        font-size: 9px;
+        color: #888888;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .fluxo-chart-legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    font-size: 11px;
+    color: #acacac;
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        
+        &.receita { background: #4caf50; }
+        &.despesa { background: #f44336; }
+      }
+    }
+  }
+}
+
+// =============================================================================
+// FASE 6 — PERFIL E PAINEL MULTI-TENANT DE EMPRESAS (ESTILOS BRANDING)
+// =============================================================================
+
+// ─── Sidenav Logo White-Label ────────────────────────────────────────────────
+.sidebar-logo.custom-logo {
+  max-height: 48px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transition: all 0.3s ease;
+}
+
+.logo-icon-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--nexa-primary);
+  box-shadow: 0 0 8px rgba(248, 148, 24, 0.4);
+  transition: all 0.3s ease;
+}
+
+// ─── Container Principal ─────────────────────────────────────────────────────
+.empresas-container {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  box-sizing: border-box;
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 26, 26, 0.85);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    backdrop-filter: blur(4px);
+    border: 1px solid #333333;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(248, 148, 24, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--nexa-primary);
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+}
+
+// ─── Painel SaaS (SUPER_ADMIN) ──────────────────────────────────────────────
+.saas-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      background: linear-gradient(135deg, #ffffff 30%, #a5a5a5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #acacac;
+      margin: 0;
+    }
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    width: 100%;
+
+    .kpi-card {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.6) 0%, rgba(20, 20, 20, 0.8) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(248, 148, 24, 0.2);
+      }
+
+      .kpi-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .kpi-data {
+        display: flex;
+        flex-direction: column;
+
+        .kpi-label {
+          font-size: 12px;
+          color: #acacac;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .kpi-value {
+          font-size: 28px;
+          font-weight: 700;
+          color: #ffffff;
+          margin: 4px 0 0 0;
+          line-height: 1;
+        }
+      }
+
+      // Contextual styles
+      &.saas-total {
+        .kpi-icon {
+          background: rgba(144, 202, 249, 0.1);
+          color: #90caf9;
+          mat-icon { color: #90caf9 !important; }
+        }
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0; right: 0; width: 60px; height: 60px;
+          background: radial-gradient(circle, rgba(144,202,249,0.05) 0%, transparent 70%);
+        }
+      }
+
+      &.saas-active {
+        .kpi-icon {
+          background: rgba(129, 199, 132, 0.1);
+          color: #81c784;
+          mat-icon { color: #81c784 !important; }
+        }
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0; right: 0; width: 60px; height: 60px;
+          background: radial-gradient(circle, rgba(129,199,132,0.05) 0%, transparent 70%);
+        }
+      }
+
+      &.saas-inactive {
+        .kpi-icon {
+          background: rgba(239, 83, 80, 0.1);
+          color: #ef5350;
+          mat-icon { color: #ef5350 !important; }
+        }
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0; right: 0; width: 60px; height: 60px;
+          background: radial-gradient(circle, rgba(239,83,80,0.05) 0%, transparent 70%);
+        }
+      }
+    }
+  }
+
+  .table-toolbar {
+    width: 100%;
+    margin-top: 8px;
+
+    .search-box {
+      position: relative;
+      max-width: 480px;
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+      &:focus-within {
+        border-color: var(--nexa-primary);
+        box-shadow: 0 0 10px rgba(248, 148, 24, 0.15);
+      }
+
+      .search-icon {
+        color: #acacac;
+        margin-right: 10px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      input {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 14px;
+        width: 100%;
+        outline: none;
+
+        &::placeholder {
+          color: #666666;
+        }
+      }
+    }
+  }
+
+  .company-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .company-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      object-fit: contain;
+      background: #151515;
+      padding: 2px;
+      border: 1px solid #282828;
+    }
+
+    .company-thumb-fallback {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: #252525;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666666;
+      border: 1px solid #333333;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .company-names {
+      display: flex;
+      flex-direction: column;
+
+      .razao {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 14px;
+      }
+
+      .fantasia {
+        font-size: 11px;
+        color: #acacac;
+        margin-top: 1px;
+      }
+    }
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #acacac;
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+// ─── Perfil do Estabelecimento (ADMIN) ───────────────────────────────────────
+.tenant-profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+
+  .section-header {
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      background: linear-gradient(135deg, #ffffff 30%, #a5a5a5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #acacac;
+      margin: 0;
+    }
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+
+    .form-column {
+      width: 100%;
+    }
+
+    .branding-column {
+      width: 100%;
+      position: sticky;
+      top: 24px;
+    }
+  }
+
+  .profile-card, .branding-card {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.4) 0%, rgba(20, 20, 20, 0.6) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+
+    mat-card-header {
+      padding: 20px 24px 12px 24px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+
+      mat-card-title {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #ffffff !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        mat-icon {
+          color: var(--nexa-primary) !important;
+        }
+      }
+    }
+
+    mat-card-content {
+      padding: 24px !important;
+    }
+  }
+
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .form-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--nexa-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 12px 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(248, 148, 24, 0.2), transparent);
+      }
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+
+      @media (max-width: 600px) {
+        flex-direction: column;
+        gap: 0;
+
+        .col-8, .col-6, .col-4, .col-3, .col-9 {
+          width: 100% !important;
+        }
+      }
+
+      .col-9 { width: 75%; }
+      .col-8 { width: 66.66%; }
+      .col-6 { width: 50%; }
+      .col-4 { width: 33.33%; }
+      .col-3 { width: 25%; }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      padding-top: 20px;
+    }
+  }
+
+  .branding-description {
+    font-size: 13px;
+    color: #acacac;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
+  }
+
+  .logo-form {
+    width: 100%;
+  }
+
+  // Live Sidenav Preview simulator
+  .live-preview-container {
+    width: 100%;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .preview-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      align-self: center;
+    }
+
+    .sidebar-mock {
+      background: #111111;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      height: 240px;
+      position: relative;
+      overflow: hidden;
+
+      .sidebar-mock-header {
+        height: 52px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+
+        .logo-mock-wrapper {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          max-width: 80%;
+
+          .mock-logo-img {
+            max-height: 26px;
+            object-fit: contain;
+            width: auto;
+            max-width: 100%;
+          }
+
+          .default-nexa-mock {
+            display: flex;
+            align-items: center;
+            height: 100%;
+          }
+        }
+
+        .mock-close-btn {
+          color: #444444;
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+
+      .sidebar-mock-nav {
+        flex: 1;
+        padding: 12px 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .mock-nav-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          color: #666666;
+          font-size: 11px;
+          font-weight: 500;
+          cursor: default;
+
+          mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+          }
+
+          .mock-label {
+            line-height: 1;
+          }
+
+          &.active {
+            background: rgba(248, 148, 24, 0.08);
+            color: var(--nexa-primary);
+          }
+
+          &.logout {
+            color: #883333;
+          }
+        }
+      }
+
+      .sidebar-mock-footer {
+        padding: 4px 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.03);
+      }
+    }
+  }
+}
+
+// ─── Acesso Negado View ──────────────────────────────────────────────────────
+.access-denied-view {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+
+  .denied-card {
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.4) 0%, rgba(20, 20, 20, 0.6) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
+
+    mat-card-content {
+      padding: 40px 24px !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .denied-icon-container {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(239, 83, 80, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+
+      .denied-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: #ef5350;
+      }
+    }
+
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    p {
+      font-size: 14px;
+      color: #acacac;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .denied-actions {
+      margin-top: 12px;
+    }
+  }
+}
+
+// ─── Animação Spinner ────────────────────────────────────────────────────────
+// ─── Animação Spinner ────────────────────────────────────────────────────────
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// =============================================================================
+// EMISSÃO DE ETIQUETAS DE CÓDIGO DE BARRAS — ESTILIZAÇÃO E IMPRESSÃO
+// =============================================================================
+
+.etiquetas-dialog-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  .section-description {
+    font-size: 13px;
+    color: #acacac;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+// Seletor de quantidade premium
+.quantity-selector-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .quantity-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ffffff;
+  }
+
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .quantity-input {
+      width: 60px;
+      height: 36px;
+      background: #111111;
+      border: 1px solid #333333;
+      border-radius: 6px;
+      color: #ffffff;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+      box-sizing: border-box;
+      
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      
+      &:focus {
+        border-color: var(--nexa-primary);
+      }
+    }
+
+    button {
+      color: var(--nexa-primary);
+      mat-icon { color: var(--nexa-primary) !important; }
+    }
+  }
+}
+
+// Prancheta de Visualização
+.preview-scroll-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  .preview-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Folha de Etiquetas (Na tela)
+.etiquetas-print-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  background: #111111;
+  border: 1px solid #282828;
+  border-radius: 8px;
+  padding: 20px;
+  max-height: 280px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  
+  // Custom Scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 3px;
+  }
+}
+
+// Card de Etiqueta Individual (Na tela)
+.etiqueta-card {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px dashed #d1d1d1;
+  border-radius: 4px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  min-height: 110px;
+
+  .etiqueta-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    font-weight: 700;
+    color: #888888;
+    border-bottom: 0.5px solid #eeeeee;
+    padding-bottom: 3px;
+    margin-bottom: 4px;
+    
+    .brand-sub {
+      color: #e65100; // Nexa accent color on white
+    }
+  }
+
+  .etiqueta-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1.2;
+    height: 26px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .etiqueta-barcode {
+    font-family: 'Libre Barcode 39', cursive !important;
+    font-size: 38px;
+    line-height: 1.1;
+    text-align: center;
+    margin: 4px 0;
+    color: #000000 !important;
+    height: 38px;
+    overflow: hidden;
+  }
+
+  .etiqueta-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    font-size: 9px;
+    font-weight: 600;
+    border-top: 0.5px solid #eeeeee;
+    padding-top: 3px;
+
+    .barcode-text {
+      color: #666666;
+      font-size: 8px;
+    }
+
+    .price-tag {
+      font-weight: 800;
+      color: #000000;
+      font-size: 11px;
+    }
+  }
+}
+
+// ─── REGRAS DE IMPRESSÃO (A MÁGICA DA ETQUETA) ──────────────────────────────
+@media print {
+  // Configuração explícita da folha A4 e suas margens
+  @page {
+    size: A4 portrait !important;
+    margin: 8mm !important;
+  }
+
+  // Ocultar Absolutamente Tudo no ERP por padrão
+  body * {
+    visibility: hidden !important;
+  }
+
+  // Resetar absolutamente todos os elementos pais do diálogo para fluxo estático/relativo.
+  // Isso remove as amarras de "overflow: hidden", "max-height" e "position: fixed/absolute" do Angular Material,
+  // permitindo que o navegador realize a quebra de página natural (gerando a página 2, 3, etc.).
+  html, body, .layout-container, main, .page-content, 
+  .cdk-overlay-container, .cdk-overlay-pane, mat-dialog-container, 
+  .mat-mdc-dialog-surface, mat-dialog-content, .etiquetas-dialog-layout, 
+  .preview-scroll-container {
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  // Exibir e forçar apenas a Área de Impressão
+  .print-area, .print-area * {
+    visibility: visible !important;
+  }
+
+  .print-area {
+    display: grid !important;
+    position: relative !important; // Mapeado de absolute para relative/static para fluxo de quebra de página
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    z-index: 99999 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: visible !important;
+    height: auto !important;
+    
+    // Grid de 3 colunas fluídas e perfeitamente equilibradas na largura útil
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    box-shadow: none !important;
+    max-height: none !important;
+  }
+
+  // Ajustes de alta fidelidade e contenção da etiqueta na impressão
+  .etiqueta-card {
+    border: 1px solid #000000 !important; // Borda sólida preta fina para visualização/corte
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin: 4px !important;
+    padding: 8px 6px !important; // Padding lateral reduzido para dar espaço ao código de barras
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    height: auto !important;
+    min-height: 110px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    
+    // Reduzir ligeiramente a fonte do código de barras na impressão para strings longas caberem sem esticar a largura
+    .etiqueta-barcode {
+      color: #000000 !important;
+      font-family: 'Libre Barcode 39', cursive !important;
+      font-size: 26px !important; // Tamanho ideal e compacto, mantendo escaneabilidade impecável
+      letter-spacing: -0.5px !important; // Reduz o espaço entre barras sem prejudicar a leitura do laser
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      height: 32px !important;
+      margin: 4px 0 !important;
+    }
+  }
+}
+/* ==========================================================================
+   MOBILE TABLE TO CARDS (Premium UI)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .nexa-table, .nexa-table-custom {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    
+    /* Esconder o cabeçalho original da tabela */
+    thead, tr.mat-mdc-header-row {
+      display: none !important;
+    }
+    
+    /* Container do Tbody */
+    tbody {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+    }
+    
+    /* Transformar cada TR em um Card elegante */
+    tr.mat-mdc-row, .table-row {
+      display: flex !important;
+      flex-direction: column !important;
+      background: var(--nexa-surface-light, #1f2937) !important;
+      border: 1px solid var(--nexa-border, rgba(255, 255, 255, 0.08)) !important;
+      border-radius: 12px !important;
+      padding: 16px !important;
+      gap: 10px !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2) !important;
+      margin-bottom: 0 !important;
+      height: auto !important;
+      min-height: auto !important;
+    }
+    
+    /* Transformar TD em linhas de dados Rótulo -> Valor */
+    td, .mat-mdc-cell {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 0 0 10px 0 !important;
+      margin-bottom: 6px !important;
+      border: none !important;
+      border-bottom: 1px dashed var(--nexa-border, rgba(255, 255, 255, 0.08)) !important;
+      font-size: 13.5px !important;
+      color: var(--nexa-text, #ffffff) !important;
+      text-align: right !important;
+      min-height: auto !important;
+      height: auto !important;
+      
+      /* Ocultar células que estão vazias (exceto as de ação) */
+      &:empty {
+        display: none !important;
+      }
+      
+      /* Ocultar o texto padrão e colocar os badges/elementos à direita */
+      > * {
+        text-align: right;
+      }
+      
+      /* Estilo Global para os Rótulos (Gerados via Pseudo-element) */
+      &::before {
+        display: block !important;
+        font-size: 11.5px !important;
+        text-transform: uppercase !important;
+        font-weight: 700 !important;
+        color: var(--nexa-text-secondary, #9f9f9f) !important;
+        padding-right: 16px !important;
+        text-align: left !important;
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+      }
+    }
+
+    /* MAPEAMENTO AUTOMÁTICO DE RÓTULOS (Angular Material) */
+    .mat-column-numero::before { content: "Nº"; }
+    .mat-column-sku::before { content: "SKU"; }
+    .mat-column-nome::before { content: "Nome / Produto"; }
+    .mat-column-categoria::before { content: "Categoria"; }
+    .mat-column-fornecedor::before { content: "Fornecedor"; }
+    .mat-column-cliente::before { content: "Cliente"; }
+    .mat-column-entidade::before { content: "Entidade"; }
+    .mat-column-contato::before { content: "Contato"; }
+    .mat-column-cpfCnpj::before, .mat-column-cnpj::before { content: "Documento"; }
+    .mat-column-quantidade::before { content: "Qtd"; }
+    .mat-column-estoqueAtual::before { content: "Estoque Atual"; }
+    .mat-column-estoqueMinimo::before { content: "Mínimo"; }
+    .mat-column-valor::before { content: "Valor"; }
+    .mat-column-valorTotal::before { content: "Valor Total"; }
+    .mat-column-status::before { content: "Status"; }
+    .mat-column-dataCompra::before { content: "Data da Compra"; }
+    .mat-column-dataVenda::before { content: "Data da Venda"; }
+    .mat-column-dataEmissao::before { content: "Emissão"; }
+    .mat-column-dataVencimento::before, .mat-column-vencimento::before { content: "Vencimento"; }
+    .mat-column-dataOrcamento::before { content: "Data"; }
+    .mat-column-formaPagamento::before { content: "Pagamento"; }
+    .mat-column-parcela::before { content: "Parcela"; }
+    .mat-column-tipo::before { content: "Tipo"; }
+    .mat-column-movimento::before { content: "Movimento"; }
+    .mat-column-motivo::before { content: "Motivo / Descrição"; }
+    .mat-column-descricao::before { content: "Descrição"; }
+    .mat-column-precoVenda::before { content: "Preço Venda"; }
+    .mat-column-precoCusto::before { content: "Custo"; }
+    .mat-column-margem::before { content: "Margem"; }
+    .mat-column-estoque::before { content: "Estoque"; }
+    .mat-column-limiteCredito::before { content: "Limite"; }
+    .mat-column-saldoDevedor::before { content: "Saldo Dev."; }
+    .mat-column-produtos::before { content: "Produtos"; }
+    .mat-column-role::before { content: "Nível"; }
+    
+    /* COLUNA DE AÇÕES - Layout Rodapé do Card */
+    .mat-column-acoes {
+      justify-content: flex-end !important;
+      gap: 12px !important;
+      margin-top: 8px !important;
+      margin-bottom: 0 !important;
+      padding-top: 14px !important;
+      padding-bottom: 0 !important;
+      border-bottom: none !important;
+      border-top: 1px solid var(--nexa-border, rgba(255, 255, 255, 0.08)) !important;
+      
+      &::before {
+        display: none !important; /* Esconder rótulo de ações */
+      }
+      
+      button {
+        width: 44px !important;
+        height: 44px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 8px !important;
+        mat-icon {
+          line-height: 24px !important;
+        }
+      }
+    }
+  }
+
+  /* REGRAS ESPECÍFICAS PARA A TABELA CUSTOM (Logística / Nativas s/ Material) */
+  .nexa-table-custom {
+    td:nth-child(1) { 
+      justify-content: flex-start !important; 
+      padding-bottom: 12px !important; 
+      border-bottom: 1px dashed var(--nexa-border, rgba(255, 255, 255, 0.08)) !important; 
+      margin-bottom: 6px !important;
+      &::before { display: none !important; }
+    }
+    td:nth-child(2)::before { content: "Venda"; }
+    td:nth-child(3)::before { content: "Cliente"; }
+    td:nth-child(4)::before { content: "Endereço"; }
+    td:nth-child(5)::before { content: "Cidade"; }
+    td:nth-child(6)::before { content: "Materiais"; }
+    td:nth-child(7)::before { content: "Valor"; }
+    
+    td:nth-child(7) {
+      margin-top: 4px !important;
+      font-size: 15px !important;
+    }
+  }
+}

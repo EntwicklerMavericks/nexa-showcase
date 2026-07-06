@@ -1,0 +1,120 @@
+<div class="onboarding-layout">
+  <div class="onboarding-header">
+    <div class="logo" style="cursor: pointer; display: flex; align-items: center; gap: 8px;" (click)="goBack()">
+      <mat-icon style="color: #FF9800; font-size: 20px; width: 20px; height: 20px;">arrow_back</mat-icon>
+      <span style="color: #FF9800; font-weight: 800; font-size: 1.5rem;">NEXA</span>
+    </div>
+    <div class="plan-badge">
+      Plano Escolhido: <strong>{{ selectedPlan() }}</strong>
+    </div>
+  </div>
+
+  <div class="onboarding-container nexa-card">
+    <h2 class="text-center" style="margin-bottom: 24px;">Crie sua conta em 3 passos</h2>
+
+    <mat-stepper [linear]="true" #stepper class="nexa-stepper">
+      <!-- Passo 1: Conta -->
+      <mat-step [stepControl]="userFormGroup">
+        <form [formGroup]="userFormGroup">
+          <ng-template matStepLabel>Sua Conta</ng-template>
+          
+          <div class="step-content">
+            <h3 style="margin-bottom: 16px;">Dados do Administrador</h3>
+            
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Nome Completo</mat-label>
+              <input matInput formControlName="userName" placeholder="Ex: João Silva" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>E-mail Corporativo</mat-label>
+              <input matInput formControlName="userEmail" type="email" placeholder="joao@empresa.com.br" [errorStateMatcher]="immediateMatcher" required>
+              <mat-error *ngIf="userFormGroup.get('userEmail')?.hasError('emailTaken')" class="nexa-error">
+                E-mail já cadastrado
+              </mat-error>
+              <mat-error *ngIf="userFormGroup.get('userEmail')?.hasError('email') && !userFormGroup.get('userEmail')?.hasError('emailTaken')" class="nexa-error">
+                E-mail inválido
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Senha de Acesso</mat-label>
+              <input matInput formControlName="userSenha" type="password" required>
+              <mat-hint>Mínimo de 6 caracteres</mat-hint>
+            </mat-form-field>
+
+            <div class="step-actions">
+              <button mat-flat-button color="primary" class="nexa-primary-btn" matStepperNext [disabled]="userFormGroup.invalid || userFormGroup.pending">
+                Próximo Passo <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Passo 2: Empresa -->
+      <mat-step [stepControl]="companyFormGroup">
+        <form [formGroup]="companyFormGroup">
+          <ng-template matStepLabel>Sua Empresa</ng-template>
+          
+          <div class="step-content">
+            <h3 style="margin-bottom: 16px;">Dados do Negócio</h3>
+            
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Razão Social</mat-label>
+              <input matInput formControlName="empresaRazaoSocial" placeholder="Sua Empresa LTDA" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Nome Fantasia (Opcional)</mat-label>
+              <input matInput formControlName="empresaNomeFantasia">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>CNPJ</mat-label>
+              <input matInput formControlName="empresaCnpj" mask="00.000.000/0000-00" placeholder="00.000.000/0001-00">
+            </mat-form-field>
+
+            <div class="step-actions split">
+              <button mat-button matStepperPrevious>Voltar</button>
+              <button mat-flat-button color="primary" class="nexa-primary-btn" matStepperNext [disabled]="companyFormGroup.invalid">
+                Ir para o Resumo <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </div>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Passo 3: Finalização -->
+      <mat-step>
+        <ng-template matStepLabel>Finalização</ng-template>
+        
+        <div class="step-content text-center">
+          <div class="checkout-summary">
+            <mat-icon class="checkout-icon">verified</mat-icon>
+            <h3>Tudo pronto para decolar!</h3>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Você está assinando o plano <strong>{{ selectedPlan() }}</strong> para a empresa <strong>{{ companyFormGroup.get('empresaRazaoSocial')?.value }}</strong>.</p>
+            
+            <div class="price-box">
+              <span class="price-label">Valor da assinatura:</span>
+              <span class="price-value">{{ getPlanPrice() }} /mês</span>
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 24px 0;">
+              * O pagamento real seria processado aqui nesta etapa via Cartão ou PIX. Para esta versão, clique em Finalizar para simular a ativação imediata da sua conta.
+            </p>
+          </div>
+
+          <div class="step-actions split">
+            <button mat-button matStepperPrevious [disabled]="isSubmitting()">Voltar</button>
+            <button mat-flat-button color="primary" class="nexa-primary-btn" (click)="submitRegistration()" [disabled]="isSubmitting()">
+              <mat-spinner diameter="20" *ngIf="isSubmitting()" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+              <span style="vertical-align: middle;">{{ isSubmitting() ? 'Criando sua conta...' : 'Finalizar Assinatura' }}</span>
+              <mat-icon *ngIf="!isSubmitting()" style="vertical-align: middle; margin-left: 8px;">check_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</div>

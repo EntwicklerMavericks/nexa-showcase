@@ -1,0 +1,32 @@
+// =============================================================================
+// Nexa ERP — Global CSS Variables & Design Tokens
+// =============================================================================
+
+:root {
+  --nexa-primary: #f89418;
+  --nexa-primary-rgb: 248, 148, 24;
+  --nexa-primary-dark: #b35f00;
+  --nexa-primary-light: #ffb86b;
+  --nexa-bg: #0d0d0d;
+  --nexa-surface: #1a1a1a;
+  --nexa-surface-light: #282828;
+  --nexa-border: #333333;
+  --nexa-border-light: #444444;
+  --nexa-text: #ffffff;
+  --nexa-text-secondary: #acacac;
+  --nexa-text-muted: #777777;
+  
+  --nexa-success: #4caf50;
+  --nexa-warning: #ffc107;
+  --nexa-danger: #f44336;
+  --nexa-info: #2196f3;
+
+  --nexa-radius-sm: 4px;
+  --nexa-radius-md: 8px;
+  --nexa-radius-lg: 16px;
+  
+  --nexa-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --nexa-sidebar-width: 260px;
+  --nexa-sidebar-collapsed-width: 68px;
+  --nexa-toolbar-height: 64px;
+}

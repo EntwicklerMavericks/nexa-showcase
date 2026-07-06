@@ -1,0 +1,99 @@
+<h2 mat-dialog-title class="dialog-title-gradient">
+  <mat-icon>business</mat-icon>
+  <span>{{ isEdit ? 'Editar Cadastro da Empresa' : 'Cadastrar Nova Empresa' }}</span>
+</h2>
+
+<mat-dialog-content class="mat-typography dialog-form-content">
+  <form [formGroup]="form" class="nexa-dialog-form">
+    
+    <div class="form-grid">
+      <!-- Razão Social -->
+      <mat-form-field appearance="outline" class="w-100 grid-span-2">
+        <mat-label>Razão Social</mat-label>
+        <input matInput formControlName="razaoSocial" placeholder="Razão Social da empresa" />
+        @if (form.get('razaoSocial')?.hasError('required')) {
+          <mat-error>Razão Social é obrigatória</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Nome Fantasia -->
+      <mat-form-field appearance="outline" class="w-100 grid-span-2">
+        <mat-label>Nome Fantasia</mat-label>
+        <input matInput formControlName="nomeFantasia" placeholder="Nome Fantasia / Marca" />
+      </mat-form-field>
+
+      <!-- CNPJ -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>CNPJ</mat-label>
+        <input matInput formControlName="cnpj" placeholder="00.000.000/0000-00" [readonly]="isEdit" mask="00.000.000/0000-00"
+               [matTooltip]="isEdit ? 'O CNPJ não pode ser alterado após o cadastro' : ''" />
+        @if (form.get('cnpj')?.hasError('required')) {
+          <mat-error>CNPJ é obrigatório</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Inscrição Estadual -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Inscrição Estadual (IE)</mat-label>
+        <input matInput formControlName="ie" placeholder="IE da empresa" />
+      </mat-form-field>
+
+      <!-- Telefone -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Telefone / Contato</mat-label>
+        <input matInput formControlName="telefone" placeholder="Telefone comercial" mask="(00) 0000-0000||(00) 0 0000-0000" />
+      </mat-form-field>
+
+      <!-- E-mail -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>E-mail Comercial</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="email@comercial.com" />
+        @if (form.get('email')?.hasError('email')) {
+          <mat-error>E-mail inválido</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- CEP -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>CEP</mat-label>
+        <input matInput formControlName="cep" placeholder="00000-000" mask="00000-000" />
+      </mat-form-field>
+
+      <!-- Endereço -->
+      <mat-form-field appearance="outline" class="w-100 grid-span-2">
+        <mat-label>Logradouro / Bairro / Complemento</mat-label>
+        <input matInput formControlName="endereco" placeholder="Endereço completo" />
+      </mat-form-field>
+
+      <!-- Cidade -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Cidade</mat-label>
+        <input matInput formControlName="cidade" placeholder="Cidade" />
+      </mat-form-field>
+
+      <!-- Estado -->
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Estado (UF)</mat-label>
+        <input matInput formControlName="estado" placeholder="Ex: SP" maxLength="2" style="text-transform: uppercase;" />
+      </mat-form-field>
+
+      <!-- URL Logo -->
+      <mat-form-field appearance="outline" class="w-100 grid-span-2">
+        <mat-label>URL do Logotipo (Branding)</mat-label>
+        <input matInput formControlName="logo" placeholder="https://exemplo.com/logo.png" />
+      </mat-form-field>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions-padding">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" 
+          [disabled]="form.invalid" 
+          (click)="onSave()" 
+          class="btn-primary-gradient">
+    <mat-icon>save</mat-icon>
+    Salvar
+  </button>
+</mat-dialog-actions>

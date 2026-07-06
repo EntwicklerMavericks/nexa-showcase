@@ -1,0 +1,89 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Compras</h2>
+    <span class="record-count">{{ totalRecords() }} registros</span>
+  </div>
+  <button mat-flat-button color="primary" (click)="openDialog()">
+    <mat-icon>add</mat-icon> Nova Compra
+  </button>
+</div>
+
+<div class="filters-bar nexa-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar</mat-label>
+    <input matInput [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)" placeholder="Fornecedor, CPF/CNPJ..." />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+  <nexa-select label="Status" class="filter-field" [ngModel]="selectedStatus()" (ngModelChange)="onStatusChange($event)">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option value="RASCUNHO">Rascunho</mat-option>
+      <mat-option value="CONFIRMADA">Confirmada</mat-option>
+      <mat-option value="FATURADA">Faturada</mat-option>
+      <mat-option value="CANCELADA">Cancelada</mat-option>
+    </nexa-select>
+</div>
+
+<div class="table-container nexa-card">
+  <table mat-table [dataSource]="compras()" class="nexa-table">
+    <ng-container matColumnDef="numero">
+      <th mat-header-cell *matHeaderCellDef>Nº</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="sku-cell">{{ row.numero ? '#' + row.numero : '—' }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="fornecedor">
+      <th mat-header-cell *matHeaderCellDef>Fornecedor</th>
+      <td mat-cell *matCellDef="let row"><span class="nome-cell">{{ row.fornecedor?.nome || '—' }}</span></td>
+    </ng-container>
+    <ng-container matColumnDef="dataCompra">
+      <th mat-header-cell *matHeaderCellDef class="hide-mobile">Data</th>
+      <td mat-cell *matCellDef="let row" class="hide-mobile">{{ row.dataCompra | date:'dd/MM/yyyy' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="valorTotal">
+      <th mat-header-cell *matHeaderCellDef>Valor Total</th>
+      <td mat-cell *matCellDef="let row">R$ {{ row.valorTotal | number:'1.2-2' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="formaPagamento">
+      <th mat-header-cell *matHeaderCellDef class="hide-mobile">Pagamento</th>
+      <td mat-cell *matCellDef="let row" class="hide-mobile">
+        <span class="pagamento-badge">{{ getFormaPagamentoLabel(row.formaPagamento) }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="status-badge" [ngClass]="getStatusClass(row.status)">{{ getStatusLabel(row.status) }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef>Ações</th>
+      <td mat-cell *matCellDef="let row">
+        @if (row.status === 'RASCUNHO') {
+          <button mat-icon-button (click)="openDialog(row)" matTooltip="Editar"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button (click)="onConfirmar(row)" matTooltip="Confirmar Recebimento" color="primary"><mat-icon>check_circle</mat-icon></button>
+          <button mat-icon-button (click)="onRemove(row)" matTooltip="Excluir"><mat-icon>delete</mat-icon></button>
+        }
+        @if (row.status === 'CONFIRMADA') {
+          <button mat-icon-button (click)="onFaturar(row)" matTooltip="Faturar (Gerar NF-e Entrada)" color="primary"><mat-icon>receipt_long</mat-icon></button>
+          <button mat-icon-button (click)="onCancelar(row)" matTooltip="Cancelar Compra" color="warn"><mat-icon>cancel</mat-icon></button>
+        }
+        @if (row.status === 'FATURADA' || row.status === 'CANCELADA') {
+          <span class="pagamento-badge">—</span>
+        }
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+  </table>
+
+  @if (compras().length === 0 && !loading()) {
+    <div class="empty-state">
+      <mat-icon>receipt</mat-icon>
+      <p>Nenhuma compra encontrada</p>
+      <button mat-stroked-button color="primary" (click)="openDialog()">Registrar primeira compra</button>
+    </div>
+  }
+
+  <mat-paginator [length]="totalRecords()" [pageSize]="pageSize()" [pageIndex]="currentPage() - 1"
+    [pageSizeOptions]="[10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+</div>

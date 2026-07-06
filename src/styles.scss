@@ -1,0 +1,1128 @@
+// =============================================================================
+// Nexa ERP — Main Design System Entry Point (Dart Sass Compliant)
+// =============================================================================
+
+@use '@angular/material' as mat;
+
+@use './assets/styles/colors' as *;
+@use './assets/styles/fonts';
+@use './assets/styles/variables';
+@use './assets/styles/spacing';
+@use './assets/styles/layout';
+@use './assets/styles/components';
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: $nexa-orange-palette,
+      tertiary: $nexa-orange-palette,
+      surface: $nexa-neutral-palette,
+      theme-type: dark,
+    ),
+    typography: Inter,
+    density: 0,
+  ));
+}
+
+// =============================================================================
+// Theme Switcher & Light Theme Overrides
+// =============================================================================
+
+.theme-toggle-btn {
+  margin-right: 12px;
+  color: var(--nexa-text-secondary) !important;
+  transition: transform var(--nexa-transition), color var(--nexa-transition);
+  
+  &:hover {
+    color: var(--nexa-primary) !important;
+    transform: rotate(20deg);
+  }
+}
+
+html.light-theme {
+  // Override core design tokens
+  --nexa-bg: #f4f4f7;
+  --nexa-surface: #ffffff;
+  --nexa-surface-light: #ececed;
+  --nexa-border: #e2e2e7;
+  --nexa-border-light: #d1d1d6;
+  --nexa-text: #1c1c1e;
+  --nexa-text-secondary: #5c5c60;
+  --nexa-text-muted: #8e8e93;
+
+  // Force global background and text overrides
+  body, .main-content, .page-content {
+    background-color: var(--nexa-bg) !important;
+    background: var(--nexa-bg) !important;
+    color: var(--nexa-text) !important;
+  }
+
+  h1, h2, h3, h4, h5, h6, .section-title, .page-title, .dialog-title {
+    color: var(--nexa-text) !important;
+  }
+
+  // Buttons Override
+  .mat-mdc-button:not(.mat-mdc-button-disabled) {
+    color: var(--nexa-text) !important;
+    .mdc-button__label {
+      color: var(--nexa-text) !important;
+    }
+  }
+  
+  .mat-mdc-button:hover .mat-mdc-button-persistent-ripple::before,
+  .mat-mdc-outlined-button:hover .mat-mdc-button-persistent-ripple::before {
+    background-color: var(--nexa-primary) !important;
+    opacity: 0.08 !important;
+  }
+
+  .mat-mdc-outlined-button, .mat-stroked-button {
+    color: var(--nexa-text) !important;
+    border-color: var(--nexa-border) !important;
+    .mat-icon { color: var(--nexa-text) !important; }
+
+    &:hover {
+      background-color: rgba(248, 148, 24, 0.08) !important;
+      border-color: var(--nexa-primary) !important;
+      color: var(--nexa-primary-dark) !important;
+      .mat-icon { color: var(--nexa-primary-dark) !important; }
+    }
+  }
+
+  .mat-mdc-icon-button {
+    color: var(--nexa-text-secondary) !important;
+  }
+
+  // Tabs Override
+  .mdc-tab__text-label {
+    color: var(--nexa-text-secondary) !important;
+  }
+  .mdc-tab--active .mdc-tab__text-label {
+    color: var(--nexa-primary) !important;
+  }
+
+  // Sidenav (Sidebar) Overrides
+  .sidebar {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+    border-right: 1px solid var(--nexa-border) !important;
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.02) !important;
+
+    .sidebar-header {
+      background: var(--nexa-surface) !important;
+      border-bottom: 1px solid var(--nexa-border) !important;
+      
+      .logo-icon {
+        color: var(--nexa-primary) !important;
+      }
+    }
+
+    .nav-item {
+      color: var(--nexa-text-secondary) !important;
+      
+      mat-icon {
+        color: var(--nexa-text-secondary) !important;
+      }
+
+      &:hover:not(.active):not(.disabled) {
+        background-color: var(--nexa-surface-light) !important;
+        color: var(--nexa-text) !important;
+        mat-icon { color: var(--nexa-text) !important; }
+      }
+
+      &.active {
+        background: rgba(248, 148, 24, 0.08) !important;
+        color: var(--nexa-primary-dark) !important;
+        font-weight: 600;
+        
+        mat-icon {
+          color: var(--nexa-primary) !important;
+        }
+      }
+      
+      &.disabled {
+        opacity: 0.4 !important;
+        color: var(--nexa-text-muted) !important;
+        mat-icon { color: var(--nexa-text-muted) !important; }
+      }
+    }
+
+    .sidebar-footer {
+      background: var(--nexa-surface) !important;
+      border-top: 1px solid var(--nexa-border) !important;
+    }
+  }
+
+  // Toolbar Header Overrides
+  .toolbar {
+    background-color: rgba(255, 255, 255, 0.75) !important;
+    background: rgba(255, 255, 255, 0.75) !important;
+    border-bottom: 1px solid var(--nexa-border) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.02) !important;
+    backdrop-filter: blur(20px);
+    color: var(--nexa-text) !important;
+
+    .page-title {
+      color: var(--nexa-text) !important;
+    }
+
+    .user-btn .user-avatar {
+      background-color: var(--nexa-surface-light) !important;
+      color: var(--nexa-text) !important;
+      border: 1px solid var(--nexa-border) !important;
+    }
+  }
+
+  // Card, Forms, and Containers Overrides
+  .nexa-card, .card, .alert-card {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+    border: 1px solid var(--nexa-border) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03) !important;
+    color: var(--nexa-text) !important;
+    
+    h3, .section-title, .alert-name, .card-title {
+      color: var(--nexa-text) !important;
+    }
+
+    .alert-cat, .stock-label {
+      color: var(--nexa-text-secondary) !important;
+    }
+
+    .stock-numbers {
+      color: var(--nexa-text) !important;
+      
+      .minimum {
+        color: var(--nexa-text-muted) !important;
+      }
+    }
+  }
+
+  // Form Fields Overrides (Fixing White on White issue!)
+  .mat-mdc-form-field {
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+      border-color: #b0b0b8 !important;
+    }
+
+    &:hover .mdc-notched-outline__leading,
+    &:hover .mdc-notched-outline__notch,
+    &:hover .mdc-notched-outline__trailing {
+      border-color: var(--nexa-border-light) !important;
+    }
+
+    &.mat-focused .mdc-notched-outline__leading,
+    &.mat-focused .mdc-notched-outline__notch,
+    &.mat-focused .mdc-notched-outline__trailing {
+      border-color: var(--nexa-primary) !important;
+    }
+
+    /* Input text color and caret (MUST BE DARK TEXT!) */
+    input.mat-mdc-input-element, 
+    .mat-mdc-select-value-text, 
+    textarea.mat-mdc-input-element, 
+    .mat-mdc-select-value,
+    .mat-mdc-select-trigger {
+      color: var(--nexa-text) !important;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+      -webkit-text-fill-color: #1c1c1e !important;
+    }
+
+    /* Floating Labels & Placeholders */
+    label,
+    .mdc-floating-label, 
+    .mdc-notched-outline .mdc-floating-label,
+    .mdc-text-field--with-leading-icon .mdc-floating-label,
+    .mdc-text-field--with-trailing-icon .mdc-floating-label,
+    .mat-mdc-form-field-label, 
+    .mat-mdc-floating-label, 
+    .mat-mdc-select-placeholder {
+      color: var(--nexa-text-secondary) !important;
+    }
+
+    &.mat-focused {
+      label,
+      .mdc-floating-label, 
+      .mdc-notched-outline .mdc-floating-label,
+      .mdc-text-field--with-leading-icon .mdc-floating-label,
+      .mdc-text-field--with-trailing-icon .mdc-floating-label,
+      .mat-mdc-form-field-label, 
+      .mat-mdc-floating-label,
+      .mdc-floating-label--float-above,
+      .mdc-notched-outline .mdc-floating-label--float-above {
+        color: var(--nexa-primary) !important;
+      }
+    }
+
+    /* Field prefix/suffix icons */
+    .mat-icon, [matPrefix], [matSuffix] {
+      color: var(--nexa-text-secondary) !important;
+    }
+  }
+
+  // Dialog/Modals Overrides (Autopopulate, PDV)
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+    border: 1px solid var(--nexa-border) !important;
+    color: var(--nexa-text) !important;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1) !important;
+
+    .mat-dialog-title, [mat-dialog-title], .dialog-title {
+      color: var(--nexa-text) !important;
+      border-bottom: 1px solid var(--nexa-border) !important;
+    }
+
+    .mat-dialog-content, [mat-dialog-content], .pdv-dialog-content {
+      color: var(--nexa-text) !important;
+    }
+
+    .mat-dialog-actions, [mat-dialog-actions], .dialog-actions-footer {
+      background-color: var(--nexa-surface) !important;
+      background: var(--nexa-surface) !important;
+      border-top: 1px solid var(--nexa-border) !important;
+      color: var(--nexa-text) !important;
+    }
+  }
+
+  // CDK Dropdown Menus & Autocomplete Overlays (Fixing White on White options!)
+  .cdk-overlay-container, .cdk-overlay-pane {
+    .mat-mdc-menu-panel, 
+    .mat-mdc-select-panel, 
+    .mdc-menu-surface, 
+    .mat-mdc-autocomplete-panel {
+      background-color: var(--nexa-surface) !important;
+      background: var(--nexa-surface) !important;
+      border: 1px solid var(--nexa-border) !important;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08) !important;
+
+      .mat-mdc-menu-item, 
+      .mat-mdc-option, 
+      .mdc-list-item {
+        color: var(--nexa-text) !important;
+
+        .mat-mdc-option-text, 
+        .mdc-list-item__primary-text {
+          color: var(--nexa-text) !important;
+        }
+
+        &:hover:not([disabled]) {
+          background-color: var(--nexa-surface-light) !important;
+          color: var(--nexa-text) !important;
+        }
+
+        &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+          background-color: rgba(248, 148, 24, 0.08) !important;
+          .mdc-list-item__primary-text {
+            color: var(--nexa-primary-dark) !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Tables Overrides (Visão Geral, PDV, Relatórios)
+  .table-container {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+    border: 1px solid var(--nexa-border) !important;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .nexa-table, table, .mat-mdc-table {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+
+    th, .mat-mdc-header-cell {
+      background-color: var(--nexa-surface) !important;
+      background: var(--nexa-surface) !important;
+      color: var(--nexa-text-secondary) !important;
+      border-bottom: 2px solid var(--nexa-border) !important;
+      font-weight: 600 !important;
+    }
+
+    td, .mat-mdc-cell {
+      background-color: var(--nexa-surface) !important;
+      background: var(--nexa-surface) !important;
+      color: var(--nexa-text) !important;
+      border-bottom: 1px solid var(--nexa-border) !important;
+    }
+
+    .table-row, .mat-mdc-row {
+      transition: background-color var(--nexa-transition) !important;
+
+      &:hover {
+        background-color: var(--nexa-surface-light) !important;
+        
+        td, .mat-mdc-cell {
+          background-color: var(--nexa-surface-light) !important;
+        }
+      }
+    }
+  }
+
+  // Table paginator
+  .mat-mdc-paginator, .mat-paginator {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+    color: var(--nexa-text-secondary) !important;
+    border-top: 1px solid var(--nexa-border) !important;
+
+    .mat-mdc-paginator-range-label,
+    .mat-mdc-paginator-page-size-label {
+      color: var(--nexa-text-secondary) !important;
+    }
+
+    .mat-mdc-paginator-navigation-button {
+      color: var(--nexa-text) !important;
+      
+      &[disabled] {
+        color: var(--nexa-text-muted) !important;
+      }
+    }
+  }
+
+  // Dashboard, Charts and BI Overrides
+  .quick-pdv-bar {
+    background-color: rgba(248, 148, 24, 0.05) !important;
+    border: 1px solid rgba(248, 148, 24, 0.25) !important;
+    
+    .nexa-scan-field .mdc-floating-label {
+      color: var(--nexa-text-secondary) !important;
+    }
+  }
+
+  .filters-bar {
+    background-color: var(--nexa-surface) !important;
+    background: var(--nexa-surface) !important;
+    border: 1px solid var(--nexa-border) !important;
+  }
+
+  .record-count {
+    color: var(--nexa-text-secondary) !important;
+  }
+
+  .page-header h2 {
+    color: var(--nexa-text) !important;
+  }
+
+  // SVG Chart text labels & gridlines
+  svg text {
+    fill: var(--nexa-text-secondary) !important;
+  }
+
+  svg line, svg path.grid-line {
+    stroke: var(--nexa-border) !important;
+  }
+
+  // DRE Table rows styling in reports
+  .dre-row, .value-row {
+    color: var(--nexa-text) !important;
+    border-bottom: 1px solid var(--nexa-border) !important;
+  }
+
+  .empty-state {
+    color: var(--nexa-text-secondary) !important;
+    mat-icon {
+      color: var(--nexa-text-muted) !important;
+    }
+  }
+
+  // Profile/User menu overlay text overrides
+  .user-menu-header {
+    strong {
+      color: var(--nexa-text) !important;
+    }
+    small {
+      color: var(--nexa-text-secondary) !important;
+    }
+  }
+
+  // Glassmorphism overrides
+  .glass-panel, .nexa-glass {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  }
+
+  // Quick Sales PDV Dialog Overrides
+  .items-header h3, .checkout-header h3 {
+    color: var(--nexa-text) !important;
+  }
+
+  .item-row {
+    background: var(--nexa-surface-light) !important;
+    border-color: var(--nexa-border) !important;
+    
+    &:hover {
+      background: var(--nexa-border-light) !important;
+      border-color: var(--nexa-primary) !important;
+    }
+  }
+
+  .checkout-fields {
+    background: var(--nexa-surface) !important;
+    border-color: var(--nexa-border) !important;
+  }
+
+  .empty-state-dialog {
+    background: var(--nexa-surface) !important;
+    border-color: var(--nexa-border) !important;
+    
+    mat-icon {
+      color: var(--nexa-text-muted) !important;
+    }
+    
+    p {
+      color: var(--nexa-text-secondary) !important;
+    }
+  }
+
+  .values-summary-card {
+    background: var(--nexa-surface-light) !important;
+    border-color: var(--nexa-border) !important;
+  }
+
+  .summary-line {
+    color: var(--nexa-text-secondary) !important;
+    
+    &.total-line {
+      border-top-color: var(--nexa-border) !important;
+      color: var(--nexa-text) !important;
+    }
+  }
+
+  .dialog-actions-footer {
+    background: var(--nexa-surface) !important;
+    border-top-color: var(--nexa-border) !important;
+  }
+
+  // Estoque Overrides
+  .alert-stock {
+    background: var(--nexa-surface-light) !important;
+    border-color: var(--nexa-border) !important;
+  }
+  .alert-card .alert-header .sku-cell {
+    background: var(--nexa-surface-light) !important;
+    color: var(--nexa-text-secondary) !important;
+  }
+
+  // Etiquetas Overrides
+  .etiquetas-print-sheet {
+    background: var(--nexa-surface-light) !important;
+    border-color: var(--nexa-border) !important;
+  }
+
+  // Pagamento Badge Overrides (Vendas)
+  .pagamento-badge {
+    background: var(--nexa-surface-light) !important;
+    color: var(--nexa-text) !important;
+    border-color: var(--nexa-border) !important;
+  }
+
+  .shortcut-suffix {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--nexa-surface-light) !important;
+    color: var(--nexa-text-secondary) !important;
+    border: 1px solid var(--nexa-border) !important;
+  }
+}
+
+// =============================================================================
+// Nexa Premium Segmented Tabs & Replenishment UI
+// =============================================================================
+
+.nexa-tabs {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--nexa-border);
+  padding: 6px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  align-self: flex-start;
+  width: max-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+html.light-theme .nexa-tabs {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 768px) {
+  .nexa-tabs {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    padding-bottom: 8px; // Para espaço do scroll
+    
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(248, 148, 24, 0.3);
+      border-radius: 4px;
+    }
+  }
+}
+
+.nexa-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--nexa-text-secondary);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    color: var(--nexa-text);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.active {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--nexa-primary), var(--nexa-primary-dark)) !important;
+    box-shadow: 0 4px 15px rgba(248, 148, 24, 0.35);
+    
+    mat-icon {
+      color: #ffffff !important;
+    }
+  }
+}
+
+html.light-theme .nexa-tab-btn {
+  &:hover {
+    background: rgba(0, 0, 0, 0.02);
+    color: var(--nexa-text) !important;
+  }
+  &.active {
+    color: #ffffff !important;
+  }
+}
+
+.tab-badge {
+  background: #f44336;
+  color: white;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 6px;
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+}
+
+.supplier-badge {
+  transition: all 0.2s ease;
+  
+  &.has-supplier:hover {
+    background: rgba(248, 148, 24, 0.1) !important;
+    border-color: var(--nexa-primary) !important;
+    color: var(--nexa-primary) !important;
+  }
+}
+
+.reposicao-table {
+  tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+html.light-theme .reposicao-table {
+  tbody tr:hover {
+    background: rgba(0, 0, 0, 0.01) !important;
+  }
+}
+
+.no-bottom-padding {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+}
+
+// =============================================================================
+// Nexa ERP — Premium Global Print Media stylesheet (A4 Compliant)
+// =============================================================================
+@media print {
+  // Hide UI Layout shells
+  .sidebar, 
+  .toolbar, 
+  .theme-toggle-btn, 
+  .header-actions, 
+  .filters-bar, 
+  .mat-mdc-paginator,
+  .no-print {
+    display: none !important;
+  }
+
+  // Force body background to white and adjust text
+  body, .main-content, .page-content {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  // Configure A4 settings
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  // Ensure table rows don't break in half
+  tr, .nexa-card, .card {
+    page-break-inside: avoid !important;
+  }
+}
+
+// =============================================================================
+// Nexa ERP — Lucro Real & DRE BI enhancements
+// =============================================================================
+.opex-breakdown-section {
+  margin-top: 16px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+}
+html.light-theme .opex-breakdown-section {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+.breakdown-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--nexa-text-secondary);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.breakdown-list::-webkit-scrollbar {
+  width: 4px;
+}
+.breakdown-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+html.light-theme .breakdown-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--nexa-text);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+html.light-theme .breakdown-item {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.04);
+}
+.breakdown-item .desc {
+  font-weight: 500;
+}
+
+.profit-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+.profit-metric-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+html.light-theme .profit-metric-box {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.04);
+}
+.profit-metric-box .m-label {
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--nexa-text-secondary);
+  font-weight: 600;
+}
+.profit-metric-box .m-val {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--nexa-text);
+}
+.profit-metric-box .m-val.profit {
+  color: #22c55e;
+}
+.top-product-item .header-row-product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.top-product-item .product-margin-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.top-product-item .product-margin-badge.high {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.top-product-item .product-margin-badge.medium {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+.top-product-item .product-margin-badge.low {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.dre-kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.dre-kpi-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+html.light-theme .dre-kpi-card {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+.dre-kpi-card .kpi-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--nexa-text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.dre-kpi-card .kpi-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nexa-text);
+}
+.dre-kpi-card .kpi-value.green {
+  color: #22c55e;
+}
+.dre-kpi-card .kpi-value.red {
+  color: #ef4444;
+}
+
+/* =============================================================================
+   Lucro Real Dashboard Styles
+   ============================================================================= */
+.lucro-real-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(30, 30, 35, 0.9), rgba(20, 20, 25, 0.95)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+html.light-theme .lucro-real-card {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+
+  &.positivo {
+    background: linear-gradient(135deg, #ffffff 40%, #f0fdf4) !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+    box-shadow: 0 12px 30px rgba(34, 197, 94, 0.15);
+  }
+
+  &.negativo {
+    background: linear-gradient(135deg, #ffffff 40%, #fef2f2) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.15);
+  }
+}
+
+.lucro-real-card.positivo {
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+.lucro-real-card.negativo {
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.lucro-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nexa-text-secondary);
+  margin-bottom: 8px;
+}
+
+.lucro-header mat-icon {
+  color: var(--nexa-primary);
+}
+
+.lucro-valor {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+}
+.lucro-real-card.positivo .lucro-valor {
+  color: #22c55e;
+}
+.lucro-real-card.negativo .lucro-valor {
+  color: #ef4444;
+}
+
+.lucro-details {
+  display: flex;
+  gap: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 16px;
+}
+html.light-theme .lucro-details {
+  border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+.lucro-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lucro-detail-item .lbl {
+  font-size: 12px;
+  color: var(--nexa-text-secondary);
+  font-weight: 500;
+}
+.lucro-detail-item .val {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.lucro-glow {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.lucro-real-card.positivo .lucro-glow {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+}
+.lucro-real-card.negativo .lucro-glow {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%);
+}
+
+html.light-theme .lucro-real-card.positivo .lucro-glow {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.25) 0%, transparent 70%);
+  width: 250px;
+  height: 250px;
+  top: -100px;
+  right: -100px;
+}
+html.light-theme .lucro-real-card.negativo .lucro-glow {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, transparent 70%);
+  width: 250px;
+  height: 250px;
+  top: -100px;
+  right: -100px;
+}
+
+.lucro-alerta-negativo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fca5a5;
+  font-size: 13.5px;
+  margin-bottom: 24px;
+}
+.lucro-alerta-negativo mat-icon {
+  color: #ef4444;
+}
+
+.kpi-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.mini-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--nexa-surface) !important;
+  border: 1px solid var(--nexa-border) !important;
+  border-radius: 12px;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.mini-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+.mini-kpi-card mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 8px;
+}
+html.light-theme .mini-kpi-card mat-icon {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.mini-kpi-card .info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mini-kpi-card .lbl {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--nexa-text-secondary);
+}
+.mini-kpi-card .val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nexa-text);
+}
+
+// =============================================================================
+// Datepicker Overlay Overrides
+// =============================================================================
+.mat-datepicker-content {
+  background-color: var(--nexa-surface) !important;
+  background: var(--nexa-surface) !important;
+  border: 1px solid var(--nexa-border) !important;
+  color: var(--nexa-text) !important;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 12px !important;
+  
+  .mat-calendar-body-cell-content, 
+  .mat-calendar-body-label, 
+  .mat-calendar-table-header th, 
+  .mat-calendar-period-button, 
+  .mat-calendar-arrow,
+  .mat-calendar-previous-button,
+  .mat-calendar-next-button {
+    color: var(--nexa-text) !important;
+  }
+  
+  .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover .mat-calendar-body-cell-content {
+    background-color: var(--nexa-surface-light) !important;
+  }
+  
+  .mat-calendar-body-selected {
+    background-color: var(--nexa-primary) !important;
+    color: #ffffff !important;
+  }
+
+  .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+    border-color: var(--nexa-primary) !important;
+  }
+}
+
+html.light-theme .mat-datepicker-content {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08) !important;
+}
+
+// Global Vendas Scanner Bar Suffix (Default Dark Mode)
+.shortcut-suffix {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #acacac;
+}
+
+// =============================================================================
+// PDV Mobile — Fix autocomplete positioning
+// The autocomplete overlay panel detaches from the input on mobile because
+// nested scroll containers (items-list-container, pdv-dialog-content) confuse
+// the CDK overlay position strategy. Solution: on mobile, remove inner scroll
+// constraints so mat-dialog-content is the single scroll source. CDK already
+// knows about mat-dialog-content via CdkScrollable, so repositioning works.
+// =============================================================================
+
+// Bottom Sheet Product Selector (Mobile)
+.produto-bottom-sheet,
+.nexa-bottom-sheet {
+  padding: 0 !important;
+  background-color: var(--nexa-surface) !important;
+  border-radius: 16px !important; // Fully rounded for floating effect
+  min-width: calc(100vw - 32px) !important;
+  max-width: calc(100vw - 32px) !important;
+  margin: 0 auto 16px auto !important; // Bottom margin for floating effect
+  box-sizing: border-box;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+}
+
+.cdk-overlay-pane:has(.nexa-bottom-sheet),
+.cdk-overlay-pane:has(.produto-bottom-sheet) {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+}

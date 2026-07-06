@@ -1,0 +1,163 @@
+.dialog-header-extrato {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.title-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.extrato-dialog-content {
+  padding: 16px 24px !important;
+  max-height: 70vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Financial cards */
+.extrato-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .extrato-summary-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.summary-card {
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-card.highlight {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.summary-card .card-label {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  color: var(--nexa-text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.summary-card .card-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--nexa-text);
+}
+
+.parcelas-section-title h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--nexa-text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.table-wrapper-dialog {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.01) !important;
+}
+
+.desc-cell {
+  font-weight: 600;
+  color: var(--nexa-text);
+}
+
+.status-badge.atrasado {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.status-badge.pendente {
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
+}
+
+/* Loading state */
+.loading-state-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 12px;
+}
+
+.loader-circle {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--nexa-primary, #f89418);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.empty-state-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+  gap: 8px;
+}
+
+.empty-state-dialog mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.empty-state-dialog p {
+  margin: 0;
+  color: var(--nexa-text-secondary);
+  font-size: 13.5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Light Theme tweaks */
+html.light-theme .summary-card {
+  background: rgba(0, 0, 0, 0.01) !important;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+html.light-theme .summary-card.highlight {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+html.light-theme .table-wrapper-dialog {
+  background: rgba(0, 0, 0, 0.005) !important;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+html.light-theme .loader-circle {
+  border-color: rgba(0, 0, 0, 0.08);
+  border-top-color: var(--nexa-primary, #f89418);
+}

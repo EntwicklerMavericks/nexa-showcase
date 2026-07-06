@@ -1,0 +1,53 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Categorias</h2>
+    <span class="record-count">{{ totalRecords() }} registros</span>
+  </div>
+  <button mat-flat-button color="primary" (click)="openDialog()">
+    <mat-icon>add</mat-icon> Nova Categoria
+  </button>
+</div>
+
+<div class="filters-bar nexa-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar categorias</mat-label>
+    <input matInput [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)" placeholder="Digite o nome da categoria..." />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<div class="table-container nexa-card">
+  <nexa-data-table
+    [data]="categorias()"
+    [columns]="columns"
+    [totalRecords]="totalRecords()"
+    [pageSize]="pageSize()"
+    [pageIndex]="currentPage() - 1"
+    [loading]="loading()"
+    emptyIcon="category"
+    emptyMessage="Nenhuma categoria encontrada"
+    emptyActionLabel="Criar primeira categoria"
+    (pageChange)="onPageChange($event)"
+    (emptyActionClick)="openDialog()"
+  >
+    <!-- Custom Cells -->
+    <ng-template nexaCustomCell="nome" let-row>
+      <span class="nome-cell">{{ row.nome }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="produtos" let-row>
+      <span class="chip-count">{{ row._count?.produtos ?? 0 }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="status" let-row>
+      <span class="status-badge" [class.active]="row.ativo" [class.inactive]="!row.ativo">
+        {{ row.ativo ? 'Ativo' : 'Inativo' }}
+      </span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="acoes" let-row>
+      <button mat-icon-button (click)="openDialog(row)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button (click)="onRemove(row)" [disabled]="!row.ativo"><mat-icon>block</mat-icon></button>
+    </ng-template>
+  </nexa-data-table>
+</div>

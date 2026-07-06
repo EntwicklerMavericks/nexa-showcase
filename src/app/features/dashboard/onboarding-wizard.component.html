@@ -1,0 +1,193 @@
+<div class="onboarding-wrapper nexa-fade-in">
+  <div class="onboarding-card nexa-card nexa-glow">
+    
+    <!-- Header -->
+    <div class="onboarding-header">
+      <div class="icon-title">
+        <mat-icon class="wizard-pulse">rocket_launch</mat-icon>
+        <div>
+          <h2>Configuração Inicial do Nexa ERP</h2>
+          <p>Vamos preparar sua loja de material de construção para decolar!</p>
+        </div>
+      </div>
+      <span class="step-indicator">Passo {{ step() }} de 3</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar" [style.width.%]="progressPercent()"></div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PASSO 1: DADOS DA EMPRESA                                                -->
+    <!-- ========================================================================= -->
+    <div *ngIf="step() === 1" class="step-content nexa-fade-in">
+      <h3><mat-icon>business</mat-icon> Identidade da sua Loja</h3>
+      <p class="description">Confirme as informações cadastrais da sua empresa e adicione a URL da sua logomarca para ativar o white-label no menu.</p>
+
+      <form #f1="ngForm" (ngSubmit)="saveEmpresaStep()" class="wizard-form">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Razão Social / Nome da Loja</mat-label>
+            <input matInput [(ngModel)]="empresaForm().razaoSocial" name="razaoSocial" required placeholder="Ex: Depósito de Material São João" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nome Fantasia</mat-label>
+            <input matInput [(ngModel)]="empresaForm().nomeFantasia" name="nomeFantasia" placeholder="Ex: Material de Construção São João" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>CNPJ</mat-label>
+            <input matInput [(ngModel)]="empresaForm().cnpj" name="cnpj" [required]="true" placeholder="00.000.000/0000-00" mask="00.000.000/0000-00" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Inscrição Estadual (IE)</mat-label>
+            <input matInput [(ngModel)]="empresaForm().ie" name="ie" placeholder="Insira o IE fiscal..." />
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="w-full col-span-2">
+            <mat-label>URL do Logotipo da Loja (Branding White-Label)</mat-label>
+            <input matInput [(ngModel)]="empresaForm().logo" name="logo" placeholder="Insira o link PNG/SVG do logotipo..." />
+            <mat-icon matSuffix matTooltip="Dica: O menu se adaptará à sua marca na hora!">palette</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Preview do Logotipo -->
+        <div class="logo-preview-box" *ngIf="empresaForm().logo">
+          <span class="preview-label">Pré-visualização da sua marca:</span>
+          <img [src]="empresaForm().logo" alt="Logo Preview" class="logo-preview" (error)="onLogoError($event)" />
+        </div>
+
+        <div class="wizard-actions">
+          <span></span>
+          <button mat-flat-button color="primary" type="submit" [disabled]="!f1.valid || loading()">
+            Continuar <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PASSO 2: IMPORTAR CATEGORIAS NICHADAS                                    -->
+    <!-- ========================================================================= -->
+    <div *ngIf="step() === 2" class="step-content nexa-fade-in">
+      <h3><mat-icon>playlist_add</mat-icon> Catálogo de Construção Inteligente</h3>
+      <p class="description">Para facilitar suas vendas, o Nexa preparou uma importação automática das 8 principais categorias do varejo de construção. Seus cadastros e relatórios serão organizados de forma profissional na hora!</p>
+
+      <div class="seeder-promo-box">
+        <div class="categories-list-preview">
+          <span class="cat-chip"><mat-icon>bolt</mat-icon> Material Elétrico</span>
+          <span class="cat-chip"><mat-icon>water_drop</mat-icon> Material Hidráulico</span>
+          <span class="cat-chip"><mat-icon>foundation</mat-icon> Alvenaria e Estrutura</span>
+          <span class="cat-chip"><mat-icon>format_paint</mat-icon> Pintura e Acabamento</span>
+          <span class="cat-chip"><mat-icon>handyman</mat-icon> Ferramentas e Ferragens</span>
+          <span class="cat-chip"><mat-icon>grid_view</mat-icon> Pisos e Revestimentos</span>
+          <span class="cat-chip"><mat-icon>roofing</mat-icon> Madeiras e Telhados</span>
+          <span class="cat-chip"><mat-icon>shield</mat-icon> EPIs e Segurança</span>
+        </div>
+      </div>
+
+      <div class="action-center" style="text-align: center; margin: 32px 0;">
+        <button mat-flat-button color="accent" size="large" class="seed-action-btn nexa-glow" [disabled]="loadingImport()" (click)="importarCategorias()" *ngIf="!importSuccess()">
+          <mat-icon>download</mat-icon> Importar Categorias de Construção (1-Clique)
+        </button>
+
+        <!-- Success State -->
+        <div class="import-success-state nexa-fade-in" *ngIf="importSuccess()">
+          <mat-icon class="success-bounce">check_circle</mat-icon>
+          <h4>Importação Concluída!</h4>
+          <p>{{ importedCount() }} categorias adicionadas e integradas com sucesso.</p>
+        </div>
+      </div>
+
+      <div class="wizard-actions">
+        <button mat-stroked-button (click)="step.set(1)"><mat-icon>arrow_back</mat-icon> Voltar</button>
+        <button mat-flat-button color="primary" [disabled]="!importSuccess() || loading()" (click)="step.set(3)">
+          Continuar <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PASSO 3: PRIMEIROS PASSOS (PRODUTO & FORNECEDOR DEMO)                    -->
+    <!-- ========================================================================= -->
+    <div *ngIf="step() === 3" class="step-content nexa-fade-in">
+      <h3><mat-icon>inventory_2</mat-icon> Primeiro Cadastro de Estoque</h3>
+      <p class="description">Pronto! Para concluir, o Nexa preparou uma sugestão do seu primeiro produto e seu primeiro fornecedor oficial de material de construção. Revise e salve para ativar as telas operacionais!</p>
+
+      <form #f3="ngForm" (ngSubmit)="saveOnboarding()" class="wizard-form">
+        <div class="form-grid-split">
+          <!-- Coluna Esquerda: Produto Inicial -->
+          <div class="form-column">
+            <h4><mat-icon color="primary">add_shopping_cart</mat-icon> Produto de Giro Rápido</h4>
+            <div class="form-subgrid" style="display: grid; gap: 12px; margin-top: 12px;">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Nome do Produto</mat-label>
+                <input matInput [(ngModel)]="firstProduct().nome" name="pNome" required />
+              </mat-form-field>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Preço Custo</mat-label>
+                  <input matInput type="number" [(ngModel)]="firstProduct().precoCusto" name="pCusto" required />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Preço Venda</mat-label>
+                  <input matInput type="number" [(ngModel)]="firstProduct().precoVenda" name="pVenda" required />
+                </mat-form-field>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px;">
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>SKU</mat-label>
+                  <input matInput [(ngModel)]="firstProduct().sku" name="pSku" required />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Código de Barras</mat-label>
+                  <input matInput [(ngModel)]="firstProduct().codigoBarras" name="pBar" required />
+                </mat-form-field>
+              </div>
+
+              <nexa-select label="Categoria Comercial" class="w-full" [(ngModel)]="firstProduct().categoriaId" name="pCat" required>
+                  @for (c of importedCategoriasList(); track c.id) {
+                    <mat-option [value]="c.id">{{ c.nome }}</mat-option>
+                  }
+                </nexa-select>
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Fornecedor Inicial -->
+          <div class="form-column">
+            <h4><mat-icon color="accent">local_shipping</mat-icon> Fornecedor de Parceria</h4>
+            <div class="form-subgrid" style="display: grid; gap: 12px; margin-top: 12px;">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Nome do Fornecedor</mat-label>
+                <input matInput [(ngModel)]="firstFornecedor().nome" name="fNome" required />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>CNPJ</mat-label>
+                <input matInput [(ngModel)]="firstFornecedor().cpfCnpj" name="fCnpj" [required]="true" mask="00.000.000/0000-00" />
+              </mat-form-field>
+
+              <nexa-select label="Tipo Contribuinte" class="w-full" [(ngModel)]="firstFornecedor().tipo" name="fTipo" required>
+                  <mat-option value="PJ">Pessoa Jurídica (PJ)</mat-option>
+                  <mat-option value="PF">Pessoa Física (PF)</mat-option>
+                </nexa-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-actions">
+          <button mat-stroked-button type="button" (click)="step.set(2)"><mat-icon>arrow_back</mat-icon> Voltar</button>
+          <button mat-flat-button color="primary" class="nexa-glow" type="submit" [disabled]="!f3.valid || loading()">
+            <mat-icon>done_all</mat-icon> Salvar e Concluir Setup
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

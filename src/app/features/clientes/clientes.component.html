@@ -1,0 +1,74 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Clientes</h2>
+    <span class="record-count">{{ totalRecords() }} registros</span>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button mat-stroked-button color="primary" (click)="openImportDialog()">
+      <mat-icon>upload_file</mat-icon> Importar CSV
+    </button>
+    <button mat-flat-button color="primary" (click)="openDialog()">
+      <mat-icon>add</mat-icon> Novo Cliente
+    </button>
+  </div>
+</div>
+
+<div class="filters-bar nexa-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar</mat-label>
+    <input matInput [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)" placeholder="Nome, CPF/CNPJ ou e-mail..." />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+  <nexa-select label="Tipo" class="filter-field" [ngModel]="selectedTipo()" (ngModelChange)="onTipoChange($event)">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option value="PF">Pessoa Física</mat-option>
+      <mat-option value="PJ">Pessoa Jurídica</mat-option>
+    </nexa-select>
+</div>
+
+<div class="table-container nexa-card">
+  <nexa-data-table
+    [data]="clientes()"
+    [columns]="columns"
+    [totalRecords]="totalRecords()"
+    [pageSize]="pageSize()"
+    [pageIndex]="currentPage() - 1"
+    [loading]="loading()"
+    emptyIcon="people"
+    emptyMessage="Nenhum cliente encontrado"
+    emptyActionLabel="Cadastrar primeiro cliente"
+    (pageChange)="onPageChange($event)"
+    (emptyActionClick)="openDialog()"
+  >
+    <!-- Custom Cells -->
+    <ng-template nexaCustomCell="nome" let-row>
+      <span class="nome-cell">{{ row.nome }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="tipo" let-row>
+      <span class="status-badge" [ngClass]="getTipoClass(row.tipo)">{{ getTipoLabel(row.tipo) }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="limiteCredito" let-row>
+      R$ {{ (row.limiteCredito || 0) | number:'1.2-2' }}
+    </ng-template>
+
+    <ng-template nexaCustomCell="saldoDevedor" let-row>
+      <span [class.text-red-500]="(row.saldoDevedor || 0) > 0" [class.font-semibold]="(row.saldoDevedor || 0) > 0">
+        R$ {{ (row.saldoDevedor || 0) | number:'1.2-2' }}
+      </span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="status" let-row>
+      <span class="status-badge" [class.active]="row.ativo" [class.inactive]="!row.ativo">
+        {{ row.ativo ? 'Ativo' : 'Inativo' }}
+      </span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="acoes" let-row>
+      <button mat-icon-button (click)="verExtrato(row)" matTooltip="Ver Extrato / Carnê" color="primary"><mat-icon>receipt_long</mat-icon></button>
+      <button mat-icon-button (click)="openDialog(row)" matTooltip="Editar"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button (click)="onRemove(row)" [disabled]="!row.ativo" matTooltip="Desativar"><mat-icon>block</mat-icon></button>
+    </ng-template>
+  </nexa-data-table>
+</div>

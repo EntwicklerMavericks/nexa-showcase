@@ -1,0 +1,273 @@
+<div class="relatorios-container nexa-fade-in">
+  <!-- Header da Página -->
+  <div class="page-header">
+    <div class="header-left">
+      <h2 class="nexa-gradient-text">Relatórios &amp; BI</h2>
+      <span class="record-count">Inteligência de Negócios consolidada</span>
+    </div>
+  </div>
+
+  <!-- Barra de Filtros de Período -->
+  <div class="filters-bar nexa-card">
+    <div class="filter-field">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data de Início</mat-label>
+        <input matInput [matDatepicker]="pickerInicio" [ngModel]="dataInicio()" (ngModelChange)="parseAndSetDate($event, dataInicio)" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerInicio></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div class="filter-field">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data de Fim</mat-label>
+        <input matInput [matDatepicker]="pickerFim" [ngModel]="dataFim()" (ngModelChange)="parseAndSetDate($event, dataFim)" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFim"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFim></mat-datepicker>
+      </mat-form-field>
+    </div>
+    <button mat-flat-button color="primary" class="reload-btn" (click)="carregarRelatorios()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon> Filtrar Período
+    </button>
+  </div>
+
+  <!-- Estado de Carregamento -->
+  @if (loading()) {
+    <div class="bi-loading-state nexa-card">
+      <div class="bi-loader"></div>
+      <p>Analisando e consolidando balanço operacional...</p>
+    </div>
+  } @else {
+    <!-- Grid Principal de BI -->
+    <div class="bi-grid-layout">
+      
+      <!-- Bloco Esquerdo: DRE Gerencial Contábil -->
+      <div class="bi-block nexa-card dre-block">
+        <div class="block-title">
+          <mat-icon>assessment</mat-icon>
+          <span>Demonstração de Resultado (DRE)</span>
+        </div>
+
+        <div class="dre-kpi-cards">
+          <div class="dre-kpi-card">
+            <span class="kpi-label">Margem Líquida Real</span>
+            <span class="kpi-value" [ngClass]="(dre()?.lucroLiquido ?? 0) >= 0 ? 'green' : 'red'">
+              {{ dre()?.indicadores?.margemLucroLiquido | number:'1.1-2' }}%
+            </span>
+          </div>
+          <div class="dre-kpi-card">
+            <span class="kpi-label">Gasto OPEX</span>
+            <span class="kpi-value text-orange-500">
+              R$ {{ dre()?.despesasOperacionais | number:'1.2-2' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="dre-table">
+          <!-- Receita Operacional -->
+          <div class="dre-row header-row"><span>Receita Operacional Bruta</span><span class="val">R$ {{ dre()?.receitaBruta | number:'1.2-2' }}</span></div>
+          <div class="dre-row sub-row"><span>(-) Descontos Concedidos</span><span class="val negative">− R$ {{ dre()?.descontosConcedidos | number:'1.2-2' }}</span></div>
+          <div class="dre-row sub-row"><span>(+) Frete Operacional Cobrado</span><span class="val positive">+ R$ {{ dre()?.freteRecebido | number:'1.2-2' }}</span></div>
+          <div class="dre-row total-row"><span>(=) Receita Operacional Líquida</span><span class="val">R$ {{ dre()?.receitaLiquida | number:'1.2-2' }}</span></div>
+          
+          <!-- Custos de Venda -->
+          <div class="dre-row sub-row highlight-row"><span>(-) Custo das Mercadorias Vendidas (CMV)</span><span class="val negative">− R$ {{ dre()?.totalCmv | number:'1.2-2' }}</span></div>
+          <div class="dre-row total-row"><span>(=) Resultado Bruto (Lucro Bruto)</span><span class="val">R$ {{ dre()?.lucroBruto | number:'1.2-2' }}</span></div>
+          <div class="dre-row meta-row"><span>Margem de Contribuição Bruta</span><span class="val text-orange-500">{{ dre()?.indicadores?.margemLucroBruto | number:'1.1-2' }}%</span></div>
+
+          <!-- Despesas Operacionais -->
+          <div class="dre-row sub-row highlight-row"><span>(-) Despesas Operacionais / Administrativas (Gerais)</span><span class="val negative">− R$ {{ dre()?.despesasOperacionais | number:'1.2-2' }}</span></div>
+          
+          <!-- RESULTADO LÍQUIDO FINAL -->
+          <div class="dre-row final-result-row" [ngClass]="(dre()?.lucroLiquido ?? 0) >= 0 ? 'positive-balance' : 'negative-balance'">
+            <span>(=) RESULTADO LÍQUIDO DO PERÍODO</span>
+            <span class="val">R$ {{ dre()?.lucroLiquido | number:'1.2-2' }}</span>
+          </div>
+          <div class="dre-row meta-row">
+            <span>Margem Líquida Real</span>
+            <span class="val font-bold" [ngClass]="(dre()?.lucroLiquido ?? 0) >= 0 ? 'text-green-500' : 'text-red-500'">
+              {{ dre()?.indicadores?.margemLucroLiquido | number:'1.1-2' }}%
+            </span>
+          </div>
+        </div>
+
+        @if (dre()?.despesasBreakdown?.length > 0) {
+          <div class="opex-breakdown-section">
+            <span class="breakdown-title">Detalhamento de Despesas Operacionais (OPEX)</span>
+            <div class="breakdown-list">
+              @for (item of dre().despesasBreakdown; track item.descricao) {
+                <div class="breakdown-item">
+                  <span class="desc">{{ item.descricao }}</span>
+                  <span class="val font-semibold">R$ {{ item.valor | number:'1.2-2' }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Bloco Direito: Evolução de Faturamento Diário (Gráfico de Linha SVG) -->
+      <div class="bi-block nexa-card chart-block">
+        <div class="block-title">
+          <mat-icon>show_chart</mat-icon>
+          <span>Evolução do Faturamento Diário</span>
+        </div>
+
+        <div class="chart-wrapper">
+          @if (vendasPeriodo().length > 0) {
+            <div class="svg-container">
+              <svg viewBox="0 0 800 240" class="svg-line-chart">
+                <defs>
+                  <!-- Gradiente para a área sombreada -->
+                  <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f89418" stop-opacity="0.3"></stop>
+                    <stop offset="100%" stop-color="#f89418" stop-opacity="0"></stop>
+                  </linearGradient>
+                </defs>
+
+                <!-- Gridlines Horizontais -->
+                <line x1="30" y1="30" x2="770" y2="30" stroke="#333333" stroke-width="0.5" stroke-dasharray="4"></line>
+                <line x1="30" y1="90" x2="770" y2="90" stroke="#333333" stroke-width="0.5" stroke-dasharray="4"></line>
+                <line x1="30" y1="150" x2="770" y2="150" stroke="#333333" stroke-width="0.5" stroke-dasharray="4"></line>
+                <line x1="30" y1="210" x2="770" y2="210" stroke="#222222" stroke-width="1"></line>
+
+                <!-- Área preenchida com gradiente -->
+                <path [attr.d]="lineChartData().areaPath" fill="url(#chartGlow)"></path>
+
+                <!-- A linha em si -->
+                <path [attr.d]="lineChartData().path" fill="none" stroke="#f89418" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path>
+
+                <!-- Nós interativos do gráfico -->
+                @for (p of lineChartData().points; track p.data) {
+                  <circle [attr.cx]="p.x" [attr.cy]="p.y" r="6" class="chart-node"
+                    (mouseenter)="showPointDetails(p)"
+                    (mouseleave)="hidePointDetails()">
+                  </circle>
+                  <!-- Ponto interno com cor de destaque -->
+                  <circle [attr.cx]="p.x" [attr.cy]="p.y" r="2.5" fill="#1a1a1a"></circle>
+                }
+              </svg>
+
+              <!-- Eixo X Datas -->
+              <div class="chart-dates-axis">
+                @for (p of lineChartData().points; track p.data; let last = $last, first = $first) {
+                  @if (first || last || lineChartData().points.length < 10 || ($index % Math.ceil(lineChartData().points.length / 6) === 0)) {
+                    <span [style.left.%]="((p.x - 30) / 740) * 100">{{ formatDate(p.data) }}</span>
+                  }
+                }
+              </div>
+
+              <!-- Tooltip flutuante interativa -->
+              @if (activePoint()) {
+                <div class="chart-tooltip-floating" [style.left.px]="activePoint()!.x - 70" [style.top.px]="activePoint()!.y - 85">
+                  <span class="tooltip-date">{{ formatDate(activePoint()!.data) }}</span>
+                  <span class="tooltip-val">R$ {{ activePoint()!.valor | number:'1.2-2' }}</span>
+                  <span class="tooltip-qty">{{ activePoint()!.quantidade }} vendas</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="chart-empty-state">
+              <mat-icon>show_chart</mat-icon>
+              <p>Nenhuma venda registrada no período filtrado</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Linha Inferior: Top Produtos vs Fluxo de Caixa Comparativo -->
+    <div class="bi-grid-layout bottom-row">
+      <!-- Bloco Esquerdo: Top 5 Produtos mais Vendidos -->
+      <div class="bi-block nexa-card top-produtos-block">
+        <div class="block-title">
+          <mat-icon>trending_up</mat-icon>
+          <span>Ranking de Lucratividade Real por Produto</span>
+        </div>
+
+        <div class="top-produtos-list">
+          @if (topProdutos().length > 0) {
+            @for (p of topProdutos(); track p.produtoId) {
+              <div class="top-product-item">
+                <div class="header-row-product">
+                  <div class="product-name">
+                    <span class="rank-badge">{{ $index + 1 }}</span>
+                    <strong>{{ p.nome }}</strong>
+                  </div>
+                  <span class="product-margin-badge" 
+                        [ngClass]="{
+                          'high': p.margem >= 40,
+                          'medium': p.margem >= 15 && p.margem < 40,
+                          'low': p.margem < 15
+                        }">
+                    {{ p.margem | number:'1.1-1' }}% Mrg
+                  </span>
+                </div>
+
+                <div class="profit-metrics-row">
+                  <div class="profit-metric-box">
+                    <span class="m-label">Faturamento</span>
+                    <span class="m-val">R$ {{ p.faturamento | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="profit-metric-box">
+                    <span class="m-label">CMV</span>
+                    <span class="m-val">R$ {{ p.cmv | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="profit-metric-box">
+                    <span class="m-label">Lucro Real</span>
+                    <span class="m-val profit">R$ {{ p.lucro | number:'1.2-2' }}</span>
+                  </div>
+                </div>
+
+                <div class="progress-info" style="margin-top: 6px;">
+                  <span class="sku">SKU: {{ p.sku }}</span>
+                  <span>{{ p.quantidade }} un. ({{ p.participacaoPercentual | number:'1.1-1' }}% fat.)</span>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="chart-empty-state">
+              <mat-icon>star_border</mat-icon>
+              <p>Sem vendas registradas no período para gerar o ranking</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Bloco Direito: Comparativo de Fluxo de Caixa Entradas vs Saídas -->
+      <div class="bi-block nexa-card comparativo-fluxo-block">
+        <div class="block-title">
+          <mat-icon>compare_arrows</mat-icon>
+          <span>Fluxo Comparativo — Contas a Receber vs Pagar</span>
+        </div>
+
+        <div class="fluxo-comparativo-content">
+          @if (fluxoCaixa().length > 0) {
+            <div class="fluxo-bars-container">
+              @for (b of fluxoCaixaBars(); track b.data) {
+                <div class="fluxo-bar-day" matTooltip="Receber: R$ {{ b.receitas | number:'1.2-2' }} | Pagar: R$ {{ b.despesas | number:'1.2-2' }}">
+                  <div class="bars-pair">
+                    <!-- Barra de Entrada (Receitas) -->
+                    <div class="bar-receita-fill" [style.height.px]="b.receitaHeight" [class.no-val]="b.receitas === 0"></div>
+                    <!-- Barra de Saída (Despesas) -->
+                    <div class="bar-despesa-fill" [style.height.px]="b.despesaHeight" [class.no-val]="b.despesas === 0"></div>
+                  </div>
+                  <span class="day-label">{{ formatDate(b.data) }}</span>
+                </div>
+              }
+            </div>
+            
+            <div class="fluxo-chart-legend">
+              <div class="legend-item"><span class="color-dot receita"></span><span>Contas a Receber</span></div>
+              <div class="legend-item"><span class="color-dot despesa"></span><span>Contas a Pagar</span></div>
+            </div>
+          } @else {
+            <div class="chart-empty-state">
+              <mat-icon>swap_horiz</mat-icon>
+              <p>Sem lançamentos financeiros no período selecionado</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

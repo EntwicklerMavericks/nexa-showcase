@@ -1,0 +1,107 @@
+<div class="assinatura-container"> 
+  <div class="header-section">
+    <h1>Gestão de Assinatura</h1>
+    <p>Gerencie seu plano, faturas e limites da plataforma.</p>
+  </div>
+
+  <div class="current-plan-card nexa-card">
+    <div class="plan-info">
+      <div class="plan-badge">Seu Plano Atual</div>
+      <h2>{{ currentPlan() }}</h2>
+      <p class="plan-desc">Você está utilizando as ferramentas essenciais. Faça o upgrade para desbloquear todo o potencial do Nexa.</p>
+    </div>
+    <div class="plan-usage">
+      <div class="usage-item">
+        <div class="usage-header">
+          <span>Usuários</span>
+          <span>2 / 2</span>
+        </div>
+        <div class="usage-bar"><div class="usage-fill" style="width: 100%;"></div></div>
+        <small class="usage-warning"><mat-icon inline>warning</mat-icon> Limite atingido</small>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="upgrade-title">Faça um Upgrade e Cresça Mais Rápido</h2>
+
+  <div class="plans-grid">
+    <!-- Plano PRO -->
+    <mat-card class="pricing-card pro-card" [class.active]="currentPlan() === 'PRO'">
+      <div class="popular-badge" *ngIf="currentPlan() !== 'PRO'">MAIS ESCOLHIDO</div>
+      <mat-card-header>
+        <mat-card-title class="pro-title">PRO</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="price">
+          <span class="currency" style="color: #8b95a5 !important;">R$</span>
+          <span class="amount" style="color: #ffffff !important;">249</span>
+          <span class="period" style="color: #8b95a5 !important;">/mês</span>
+        </div>
+        
+        <p class="plan-subtitle">A escolha perfeita para empresas em expansão estruturada.</p>
+        
+        <ul class="features-list">
+          <li><mat-icon class="check-icon">check</mat-icon> Até 10 usuários</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Tudo do plano Starter</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Emissão Ilimitada de Notas Fiscais</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Módulo de Orçamentos</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Gestão Completa de Logística</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Relatórios Avançados (DRE)</li>
+          <li class="inactive-feature"><mat-icon class="close-icon">close</mat-icon> Múltiplas Filiais</li>
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-flat-button class="nexa-primary-btn pro-btn w-100" 
+                [disabled]="currentPlan() === 'PRO' || isUpgrading()" 
+                (click)="upgradeTo('PRO')">
+          <span *ngIf="currentPlan() === 'PRO'">Plano Atual</span>
+          <ng-container *ngIf="currentPlan() !== 'PRO'">
+            <mat-spinner diameter="20" *ngIf="isUpgrading()"></mat-spinner>
+            <span *ngIf="!isUpgrading()">Assinar Pro</span>
+          </ng-container>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Plano PREMIUM -->
+    <mat-card class="pricing-card premium-card">
+      <mat-card-header>
+        <mat-card-title class="premium-title">PREMIUM</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="price">
+          <span class="currency" style="color: #8b95a5 !important;">R$</span>
+          <span class="amount" style="color: #ffffff !important;">499</span>
+          <span class="period" style="color: #8b95a5 !important;">/mês</span>
+        </div>
+        
+        <p class="plan-subtitle">Poder absoluto para atacados e grandes distribuidoras.</p>
+        
+        <ul class="features-list">
+          <li><mat-icon class="check-icon">check</mat-icon> Usuários Ilimitados</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Tudo do plano Pro</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Gestão de Múltiplas Filiais</li>
+          <li><mat-icon class="check-icon">check</mat-icon> API Exclusiva para E-commerce</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Servidor Dedicado e Backup Hora em Hora</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Suporte Prioritário 24/7</li>
+          <li><mat-icon class="check-icon">check</mat-icon> Treinamento da Equipe Onboarding</li>
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-flat-button class="nexa-primary-btn premium-btn w-100"
+                [disabled]="currentPlan() === 'PREMIUM' || isUpgrading()"
+                (click)="upgradeTo('PREMIUM')">
+          <span *ngIf="currentPlan() === 'PREMIUM'">Plano Atual</span>
+          <ng-container *ngIf="currentPlan() !== 'PREMIUM'">
+            <mat-spinner diameter="20" *ngIf="isUpgrading()"></mat-spinner>
+            <span *ngIf="!isUpgrading()">Assinar Premium</span>
+          </ng-container>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

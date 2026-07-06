@@ -1,0 +1,156 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon color="primary">description</mat-icon>
+  {{ data.orcamento ? 'Editar Orçamento #' + (data.orcamento.numero || '') : 'Gerar Orçamento Rápido' }}
+</h2>
+
+<mat-dialog-content class="pdv-dialog-content">
+  <form [formGroup]="form" class="pdv-layout-grid">
+    
+    <!-- Coluna Esquerda: Itens do Orçamento e Bipe -->
+    <div class="pdv-cart-col">
+      
+      <!-- Leitor de Código de Barras com Autofocus -->
+      <div class="barcode-scan-container">
+        <mat-form-field appearance="outline" class="scan-field">
+          <mat-label>Bipar Próximo Produto (Código de Barras / SKU)</mat-label>
+          <input matInput #barcodeInput
+                 type="text" 
+                 placeholder="Bipe o código de barras ou digite o SKU e pressione Enter..." 
+                 [ngModel]="barcodeSearchTerm" 
+                 (ngModelChange)="barcodeSearchTerm = $event"
+                 [ngModelOptions]="{standalone: true}"
+                 (keydown.enter)="onBarcodeScan($event)" />
+          <mat-icon matSuffix color="primary">qr_code_scanner</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="items-header">
+        <h3>Produtos Selecionados ({{ itens.length }})</h3>
+        <button mat-stroked-button color="primary" (click)="addItem()" type="button" class="nexa-button-sm">
+          <mat-icon>add</mat-icon> Inserir Item
+        </button>
+      </div>
+
+      <!-- Lista de Itens no Orçamento -->
+      <div formArrayName="itens" class="items-list-container">
+        @for (item of itens.controls; track $index; let i = $index) {
+          <div class="item-row" [formGroupName]="i">
+            <nexa-select label="Produto" class="flex-2" formControlName="produtoId" (selectionChange)="onProdutoChange($event.value, i)">
+                @for (p of produtos; track p.id) {
+                  <mat-option [value]="p.id">{{ p.nome }} ({{ p.sku }})</mat-option>
+                }
+              </nexa-select>
+            
+            <mat-form-field appearance="outline" style="width: 70px;">
+              <mat-label>Qtd</mat-label>
+              <input matInput formControlName="quantidade" type="number" step="0.001" min="0.001" />
+            </mat-form-field>
+
+            <nexa-select label="Unid." style="width: 75px;" formControlName="unidade">
+                <mat-option value="UN">UN</mat-option>
+                <mat-option value="MT">MT</mat-option>
+                <mat-option value="M²">M²</mat-option>
+                <mat-option value="M³">M³</mat-option>
+                <mat-option value="KG">KG</mat-option>
+                <mat-option value="CX">CX</mat-option>
+                <mat-option value="SC">SC</mat-option>
+                <mat-option value="PC">PC</mat-option>
+                <mat-option value="L">L</mat-option>
+              </nexa-select>
+            
+            <mat-form-field appearance="outline" style="width: 95px;">
+              <mat-label>Unitário</mat-label>
+              <input matInput formControlName="valorUnitario" type="number" step="0.01" />
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" style="width: 90px;">
+              <mat-label>Desc. Item</mat-label>
+              <input matInput formControlName="valorDesconto" type="number" step="0.01" min="0" />
+            </mat-form-field>
+            
+            <button mat-icon-button color="warn" (click)="removeItem(i)" type="button" matTooltip="Remover item" class="remove-btn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (itens.length === 0) {
+        <div class="empty-state-dialog">
+          <mat-icon>description</mat-icon>
+          <p>Orçamento Vazio. Bipe um produto ou clique em "Inserir Item" para começar.</p>
+        </div>
+      }
+    </div>
+
+    <!-- Coluna Direita: Dados Gerais e Resumo -->
+    <div class="pdv-checkout-col">
+      <div class="checkout-header">
+        <h3>Cliente e Validade</h3>
+      </div>
+
+      <div class="checkout-fields">
+        <!-- Cliente (Opcional) -->
+        <nexa-select label="Cliente (Opcional)" class="w-100" formControlName="clienteId">
+            <mat-option [value]="null">Consumidor Final (Sem Cadastro)</mat-option>
+            @for (c of clientes; track c.id) {
+              <mat-option [value]="c.id">{{ c.nome }} — {{ c.cpfCnpj }}</mat-option>
+            }
+          </nexa-select>
+
+        <!-- Validade do Orçamento -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Data de Validade</mat-label>
+          <input matInput formControlName="validade" type="date" />
+        </mat-form-field>
+
+        <!-- Frete e Desconto Global -->
+        <div class="form-row-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Frete (R$)</mat-label>
+            <input matInput formControlName="valorFrete" type="number" step="0.01" min="0" />
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Desconto Global (R$)</mat-label>
+            <input matInput formControlName="valorDesconto" type="number" step="0.01" min="0" />
+          </mat-form-field>
+        </div>
+
+        <!-- Observações -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Observações do Orçamento</mat-label>
+          <textarea matInput formControlName="observacoes" rows="3" placeholder="Prazo de entrega, garantia, condições de pagamento adicionais..."></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Resumo Financeiro do Orçamento -->
+      <div class="values-summary-card">
+        <div class="summary-line">
+          <span>Subtotal dos Itens</span>
+          <span>R$ {{ calcularSubtotal() | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Desconto Global</span>
+          <span class="discount">- R$ {{ form.get('valorDesconto')?.value | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Frete Cobrado</span>
+          <span>+ R$ {{ form.get('valorFrete')?.value | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-line total-line">
+          <span>Valor Total</span>
+          <span class="nexa-gradient-text">R$ {{ calcularTotal() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+    
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions-footer">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="!form.valid || itens.length === 0" style="padding: 0 24px; height: 40px;">
+    <mat-icon style="margin-right: 6px;">check</mat-icon> Salvar Orçamento
+  </button>
+</mat-dialog-actions>

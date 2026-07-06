@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <!-- Gradiente de cor do raio do Nexa ERP -->
+    <linearGradient id="nexa-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffb74d" />
+      <stop offset="50%" stop-color="#f89418" />
+      <stop offset="100%" stop-color="#ff5500" />
+    </linearGradient>
+    
+    <!-- Gradiente de borda para o background -->
+    <linearGradient id="border-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a3a3a" />
+      <stop offset="100%" stop-color="#151515" />
+    </linearGradient>
+    
+    <!-- Filtro de brilho sutil (glow) para dar aspecto premium -->
+    <filter id="glow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="0.8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Círculo de Background Escuro Metálico -->
+  <circle cx="16" cy="16" r="14.5" fill="#0d0d0e" stroke="url(#border-gradient)" stroke-width="1.5" />
+  
+  <!-- Ícone do Raio do Nexa com Gradiente e Glow -->
+  <path d="M18.5 4.5 L9.5 16.5 H14.5 L13.5 27.5 L22.5 15.5 H17.5 Z" fill="url(#nexa-gradient)" filter="url(#glow)" />
+</svg>

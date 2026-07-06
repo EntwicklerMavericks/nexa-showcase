@@ -1,0 +1,71 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Equipe</h2>
+    <span class="record-count">{{ totalRecords() }} usuários</span>
+  </div>
+  <div class="header-actions">
+    <button mat-raised-button color="primary" class="nexa-primary-btn" (click)="openDialog()">
+      <mat-icon>person_add</mat-icon>
+      Novo Usuário
+    </button>
+  </div>
+</div>
+
+<div class="filters-bar nexa-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar</mat-label>
+    <input matInput [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)" placeholder="Nome ou e-mail..." />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<div class="table-container nexa-card">
+  <nexa-data-table
+    [data]="usuarios()"
+    [columns]="columns"
+    [totalRecords]="totalRecords()"
+    [pageSize]="pageSize()"
+    [pageIndex]="currentPage() - 1"
+    [loading]="loading()"
+    emptyIcon="group"
+    emptyMessage="Nenhum usuário encontrado"
+    emptyActionLabel="Cadastrar primeiro usuário"
+    (pageChange)="onPageChange($event)"
+    (emptyActionClick)="openDialog()"
+  >
+    <!-- Custom Cells -->
+    <ng-template nexaCustomCell="nome" let-row>
+      <div class="user-cell" style="display: flex; align-items: center; gap: 12px;">
+        @if (row.avatarUrl) {
+          <img [src]="row.avatarUrl" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--nexa-border);" />
+        } @else {
+          <div class="user-cell-avatar" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--nexa-surface-light); color: var(--nexa-text); font-weight: 600; font-size: 14px; flex-shrink: 0;">{{ row.nome?.charAt(0)?.toUpperCase() }}</div>
+        }
+        <span class="nome-cell">{{ row.nome }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template nexaCustomCell="role" let-row>
+      <span class="role-chip" [ngClass]="getRoleClass(row.role)">{{ getRoleLabel(row.role) }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="status" let-row>
+      <span class="status-badge" [class.active]="row.ativo" [class.inactive]="!row.ativo">
+        {{ row.ativo ? 'Ativo' : 'Inativo' }}
+      </span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="createdAt" let-row>
+      {{ row.createdAt | date:'dd/MM/yyyy' }}
+    </ng-template>
+
+    <ng-template nexaCustomCell="acoes" let-row>
+      <button mat-icon-button matTooltip="Editar" (click)="openDialog(row)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Desativar" (click)="onRemove(row)" [disabled]="!row.ativo">
+        <mat-icon>block</mat-icon>
+      </button>
+    </ng-template>
+  </nexa-data-table>
+</div>

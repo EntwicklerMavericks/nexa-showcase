@@ -1,0 +1,385 @@
+<div class="empresas-container">
+  
+  <!-- Loading Backdrop -->
+  @if (loading()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Processando informações...</p>
+    </div>
+  }
+
+  <!-- =============================================================================
+       1. VISÃO SAAS GLOBAL (SUPER_ADMIN)
+       ============================================================================= -->
+  @if (role() === 'SUPER_ADMIN') {
+    <div class="saas-dashboard">
+      <div class="section-header">
+        <div>
+          <h2>Painel SaaS Global</h2>
+          <p class="subtitle">Gerencie as empresas e tenants cadastradas na plataforma Nexa ERP.</p>
+        </div>
+        <button mat-flat-button color="primary" class="btn-primary-gradient" (click)="openEmpresaDialog()">
+          <mat-icon>add</mat-icon>
+          Cadastrar Empresa
+        </button>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card saas-total">
+          <div class="kpi-icon">
+            <mat-icon>business</mat-icon>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-label">Total de Empresas</span>
+            <h3 class="kpi-value">{{ totalEmpresas() }}</h3>
+          </div>
+        </div>
+
+        <div class="kpi-card saas-active">
+          <div class="kpi-icon">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-label">Empresas Ativas</span>
+            <h3 class="kpi-value">{{ ativasCount() }}</h3>
+          </div>
+        </div>
+
+        <div class="kpi-card saas-inactive">
+          <div class="kpi-icon">
+            <mat-icon>block</mat-icon>
+          </div>
+          <div class="kpi-data">
+            <span class="kpi-label">Inativas / Suspensas</span>
+            <h3 class="kpi-value">{{ inativasCount() }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter & Search Toolbar -->
+      <div class="table-toolbar">
+        <div class="search-box">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Buscar por Razão Social, Fantasia ou CNPJ..." 
+                 (input)="onSearchChange(searchField.value)" #searchField />
+        </div>
+      </div>
+
+      <!-- Table Section -->
+      <div class="table-card glass-card">
+        <table mat-table [dataSource]="empresas()" class="nexa-table">
+          
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> #{{ element.id }} </td>
+          </ng-container>
+
+          <!-- Company Details Column -->
+          <ng-container matColumnDef="nomeFantasia">
+            <th mat-header-cell *matHeaderCellDef> Empresa </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="company-cell">
+                @if (element.logo) {
+                  <img [src]="element.logo" alt="Logo" class="company-thumb" />
+                } @else {
+                  <div class="company-thumb-fallback">
+                    <mat-icon>business</mat-icon>
+                  </div>
+                }
+                <div class="company-names">
+                  <span class="razao">{{ element.razaoSocial }}</span>
+                  @if (element.nomeFantasia) {
+                    <span class="fantasia">{{ element.nomeFantasia }}</span>
+                  }
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- CNPJ Column -->
+          <ng-container matColumnDef="cnpj">
+            <th mat-header-cell *matHeaderCellDef> CNPJ </th>
+            <td mat-cell *matCellDef="let element"> {{ formatCNPJ(element.cnpj) }} </td>
+          </ng-container>
+
+          <!-- Contact Column -->
+          <ng-container matColumnDef="contato">
+            <th mat-header-cell *matHeaderCellDef> Contato </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="contact-details">
+                @if (element.telefone) {
+                  <span class="phone"><mat-icon>phone</mat-icon> {{ element.telefone }}</span>
+                }
+                @if (element.email) {
+                  <span class="email"><mat-icon>email</mat-icon> {{ element.email }}</span>
+                }
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let element">
+              <span class="status-badge" [class.active]="element.ativo" [class.inactive]="!element.ativo">
+                {{ element.ativo ? 'Ativa' : 'Inativa' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- CreatedAt Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef> Cadastro </th>
+            <td mat-cell *matCellDef="let element"> {{ element.createdAt | date:'dd/MM/yyyy' }} </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef class="text-right"> Ações </th>
+            <td mat-cell *matCellDef="let element" class="text-right">
+              <button mat-icon-button color="primary" matTooltip="Editar empresa" (click)="openEmpresaDialog(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      [color]="element.ativo ? 'warn' : 'accent'"
+                      [matTooltip]="element.ativo ? 'Desativar empresa' : 'Ativar empresa'" 
+                      (click)="toggleEmpresaStatus(element)">
+                <mat-icon>{{ element.ativo ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- Empty State -->
+        @if (empresas().length === 0 && !loading()) {
+          <div class="empty-state">
+            <mat-icon>business_danger</mat-icon>
+            <h4>Nenhuma empresa encontrada</h4>
+            <p>Cadastre uma empresa ou refine a busca.</p>
+          </div>
+        }
+
+        <mat-paginator [length]="totalRecords()"
+                       [pageSize]="pageSize()"
+                       [pageSizeOptions]="[5, 10, 20]"
+                       (page)="onPageChange($event)"
+                       aria-label="Selecione a página">
+        </mat-paginator>
+      </div>
+    </div>
+  }
+
+  <!-- =============================================================================
+       2. TELA DE CONFIGURAÇÃO DO ESTABELECIMENTO (ADMIN / GERENTE)
+       ============================================================================= -->
+  @else if (role() === 'ADMIN' || role() === 'GERENTE') {
+    <div class="tenant-profile-view">
+      <div class="section-header">
+        <div>
+          <h2>Configurações do Estabelecimento</h2>
+          <p class="subtitle">Gerencie os dados cadastrais da empresa e personalize a identidade visual da plataforma.</p>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <!-- Form Column (Left) -->
+        <div class="form-column">
+          <mat-card class="profile-card glass-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>edit_note</mat-icon> Dados da Empresa
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+                
+                <h3 class="form-section-title">Informações Cadastrais</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="col-8">
+                    <mat-label>Razão Social</mat-label>
+                    <input matInput formControlName="razaoSocial" placeholder="Ex: Nexa Soluções ERP Ltda" />
+                    @if (profileForm.get('razaoSocial')?.hasError('required')) {
+                      <mat-error>Razão Social é obrigatória</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="col-4">
+                    <mat-label>Nome Fantasia</mat-label>
+                    <input matInput formControlName="nomeFantasia" placeholder="Ex: Nexa ERP" />
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="col-6">
+                    <mat-label>CNPJ</mat-label>
+                    <input matInput formControlName="cnpj" placeholder="00.000.000/0000-00" [readonly]="true" mask="00.000.000/0000-00"
+                           matTooltip="O CNPJ não pode ser editado. Entre em contato com o suporte." />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="col-6">
+                    <mat-label>Inscrição Estadual (IE)</mat-label>
+                    <input matInput formControlName="ie" placeholder="Isento ou Número da IE" />
+                  </mat-form-field>
+                </div>
+
+                <h3 class="form-section-title">Informações de Contato</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="col-6">
+                    <mat-label>Telefone / WhatsApp</mat-label>
+                    <input matInput formControlName="telefone" placeholder="Ex: (11) 99999-9999" mask="(00) 0000-0000||(00) 0 0000-0000" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="col-6">
+                    <mat-label>E-mail Comercial</mat-label>
+                    <input matInput formControlName="email" type="email" placeholder="Ex: contato@nexa.com" />
+                    @if (profileForm.get('email')?.hasError('email')) {
+                      <mat-error>Insira um e-mail válido</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <h3 class="form-section-title">Endereço</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="col-3">
+                    <mat-label>CEP</mat-label>
+                    <input matInput formControlName="cep" placeholder="00000-000" mask="00000-000" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="col-9">
+                    <mat-label>Logradouro / Número / Bairro</mat-label>
+                    <input matInput formControlName="endereco" placeholder="Ex: Av. Paulista, 1000 - Apto 21" />
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="col-8">
+                    <mat-label>Cidade</mat-label>
+                    <input matInput formControlName="cidade" placeholder="Ex: São Paulo" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="col-4">
+                    <mat-label>Estado (UF)</mat-label>
+                    <input matInput formControlName="estado" placeholder="Ex: SP" maxLength="2" style="text-transform: uppercase;" />
+                  </mat-form-field>
+                </div>
+
+                <div class="form-actions">
+                  <button mat-raised-button color="primary" type="submit" 
+                          [disabled]="profileForm.invalid || saving()" 
+                          class="btn-save btn-primary-gradient">
+                    <mat-icon>save</mat-icon>
+                    {{ saving() ? 'Salvando...' : 'Salvar Alterações' }}
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Branding Column (Right) -->
+        <div class="branding-column">
+          <!-- Logo Input Card -->
+          <mat-card class="branding-card glass-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>palette</mat-icon> Identidade Visual (White-Label)
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="branding-description">
+                Personalize a plataforma de acordo com a sua identidade corporativa. Cole a URL pública do logotipo da sua marca abaixo e ele substituirá instantaneamente a marca padrão no menu lateral.
+              </p>
+
+              <form [formGroup]="profileForm" class="logo-form">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>URL do Logotipo (PNG/SVG recomendado)</mat-label>
+                  <mat-icon matPrefix style="margin-right: 8px; opacity: 0.7;">link</mat-icon>
+                  <input matInput formControlName="logo" placeholder="https://exemplo.com/sua-logo.png" />
+                  @if (profileForm.get('logo')?.value) {
+                    <button mat-icon-button matSuffix (click)="profileForm.get('logo')?.setValue(''); $event.preventDefault();" matTooltip="Limpar campo">
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  }
+                </mat-form-field>
+              </form>
+
+              <!-- Live Sidebar Preview simulation -->
+              <div class="live-preview-container">
+                <span class="preview-badge">Pré-visualização em Tempo Real</span>
+                
+                <div class="sidebar-mock">
+                  <div class="sidebar-mock-header">
+                    <!-- Dynamic logo preview -->
+                    <div class="logo-mock-wrapper">
+                      @if (currentEmpresaLogo()) {
+                        <img [src]="currentEmpresaLogo()" alt="Sua Marca" class="mock-logo-img" />
+                      } @else {
+                        <div class="default-nexa-mock">
+                          <img src="/assets/images/logo.png" alt="Nexa ERP" class="mock-logo-img" />
+                        </div>
+                      }
+                    </div>
+                    <div class="mock-close-btn">
+                      <mat-icon>chevron_left</mat-icon>
+                    </div>
+                  </div>
+
+                  <div class="sidebar-mock-nav">
+                    <div class="mock-nav-item active">
+                      <mat-icon>dashboard</mat-icon> <span class="mock-label">Dashboard</span>
+                    </div>
+                    <div class="mock-nav-item">
+                      <mat-icon>inventory_2</mat-icon> <span class="mock-label">Produtos</span>
+                    </div>
+                    <div class="mock-nav-item">
+                      <mat-icon>warehouse</mat-icon> <span class="mock-label">Estoque</span>
+                    </div>
+                    <div class="mock-nav-item">
+                      <mat-icon>assessment</mat-icon> <span class="mock-label">Relatórios</span>
+                    </div>
+                  </div>
+
+                  <div class="sidebar-mock-footer">
+                    <div class="mock-nav-item logout">
+                      <mat-icon>logout</mat-icon> <span class="mock-label">Sair</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- =============================================================================
+       3. TELA DE ACESSO NEGADO (OUTRAS ROLES)
+       ============================================================================= -->
+  @else {
+    <div class="access-denied-view">
+      <mat-card class="denied-card glass-card">
+        <mat-card-content>
+          <div class="denied-icon-container">
+            <mat-icon class="denied-icon">lock</mat-icon>
+          </div>
+          <h3>Acesso Restrito</h3>
+          <p>
+            Desculpe, você não tem permissão para acessar esta área. A gestão de empresas e configurações é restrita apenas aos administradores da plataforma Nexa ERP.
+          </p>
+          <div class="denied-actions">
+            <a mat-raised-button color="primary" class="btn-primary-gradient" href="/dashboard">
+              <mat-icon>dashboard</mat-icon>
+              Voltar ao Dashboard
+            </a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

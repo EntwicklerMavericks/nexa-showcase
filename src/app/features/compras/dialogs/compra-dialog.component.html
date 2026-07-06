@@ -1,0 +1,115 @@
+<h2 mat-dialog-title>{{ data.compra ? 'Editar Compra' : 'Nova Compra' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-tab-group>
+      <!-- Tab 1: Dados Gerais -->
+      <mat-tab label="Dados Gerais">
+        <div class="tab-content">
+          <div class="form-row">
+            <nexa-select label="Fornecedor" class="flex-2" formControlName="fornecedorId">
+                @for (f of fornecedores; track f.id) {
+                  <mat-option [value]="f.id">{{ f.nome }} — {{ f.cpfCnpj }}</mat-option>
+                }
+              </nexa-select>
+            <nexa-select label="Forma de Pagamento" class="flex-1" formControlName="formaPagamento">
+                @for (fp of formasPagamento; track fp.value) {
+                  <mat-option [value]="fp.value">{{ fp.label }}</mat-option>
+                }
+              </nexa-select>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Parcelas</mat-label>
+              <input matInput formControlName="parcelas" type="number" min="1" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Frete (R$)</mat-label>
+              <input matInput formControlName="valorFrete" type="number" step="0.01" min="0" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Desconto Global (R$)</mat-label>
+              <input matInput formControlName="valorDesconto" type="number" step="0.01" min="0" />
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Observações</mat-label>
+            <textarea matInput formControlName="observacoes" rows="3"></textarea>
+          </mat-form-field>
+        </div>
+      </mat-tab>
+
+      <!-- Tab 2: Itens -->
+      <mat-tab label="Itens">
+        <div class="tab-content">
+          <div class="items-header">
+            <h3>Itens da Compra</h3>
+            <button mat-stroked-button color="primary" (click)="addItem()" type="button">
+              <mat-icon>add</mat-icon> Adicionar Item
+            </button>
+          </div>
+
+          <div formArrayName="itens">
+            @for (item of itens.controls; track $index; let i = $index) {
+              <div class="item-row" [formGroupName]="i">
+                <nexa-select label="Produto" class="flex-2" [formControlName]="'produtoId'" (selectionChange)="onProdutoChange($event.value, i)">
+                    @for (p of produtos; track p.id) {
+                      <mat-option [value]="p.id">{{ p.nome }} ({{ p.sku }})</mat-option>
+                    }
+                  </nexa-select>
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Qtd</mat-label>
+                  <input matInput [formControlName]="'quantidade'" type="number" min="1" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Valor Unit.</mat-label>
+                  <input matInput [formControlName]="'valorUnitario'" type="number" step="0.01" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Desconto</mat-label>
+                  <input matInput [formControlName]="'valorDesconto'" type="number" step="0.01" min="0" />
+                </mat-form-field>
+                <button mat-icon-button color="warn" (click)="removeItem(i)" type="button" matTooltip="Remover item">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+
+          @if (itens.length === 0) {
+            <div class="empty-state">
+              <mat-icon>shopping_cart</mat-icon>
+              <p>Adicione itens à compra</p>
+            </div>
+          }
+
+          <div class="values-summary">
+            <div class="value-row">
+              <span>Subtotal dos Itens</span>
+              <span>R$ {{ calcularSubtotal() | number:'1.2-2' }}</span>
+            </div>
+            <div class="value-row">
+              <span>Desconto Global</span>
+              <span>- R$ {{ form.get('valorDesconto')?.value | number:'1.2-2' }}</span>
+            </div>
+            <div class="value-row">
+              <span>Frete</span>
+              <span>+ R$ {{ form.get('valorFrete')?.value | number:'1.2-2' }}</span>
+            </div>
+            <div class="value-row total">
+              <span>Total da Compra</span>
+              <span>R$ {{ calcularTotal() | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="!form.valid || itens.length === 0">Salvar</button>
+</mat-dialog-actions>

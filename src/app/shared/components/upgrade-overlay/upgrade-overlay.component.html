@@ -1,0 +1,35 @@
+<div class="upgrade-overlay-container nexa-fade-in">
+  <div class="upgrade-header">
+    <div class="lock-icon-wrapper">
+      <mat-icon>lock</mat-icon>
+    </div>
+    <h2>Recurso Premium</h2>
+  </div>
+
+  <div class="upgrade-body">
+    <p>O acesso a <strong>{{ data.feature }}</strong> é exclusivo para assinantes do plano <span class="plan-badge">{{ data.requiredPlan }}</span>.</p>
+    
+    <div class="benefits-list">
+      <div class="benefit-item">
+        <mat-icon>check_circle</mat-icon>
+        <span>Desbloqueie ferramentas avançadas</span>
+      </div>
+      <div class="benefit-item">
+        <mat-icon>check_circle</mat-icon>
+        <span>Escale a gestão da sua loja</span>
+      </div>
+      <div class="benefit-item">
+        <mat-icon>check_circle</mat-icon>
+        <span>Suporte prioritário via WhatsApp</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="upgrade-actions">
+    <button mat-button (click)="onClose()">Voltar</button>
+    <button mat-flat-button color="primary" class="btn-upgrade" (click)="onUpgrade()">
+      Ver Planos e Fazer Upgrade
+      <mat-icon>rocket_launch</mat-icon>
+    </button>
+  </div>
+</div>

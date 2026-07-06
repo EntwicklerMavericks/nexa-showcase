@@ -1,0 +1,23 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>{{ data.categoria ? 'edit' : 'add_circle' }}</mat-icon>
+  {{ data.categoria ? 'Editar Categoria' : 'Nova Categoria' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="tab-content" style="width: 100%; min-width: 0;">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="nome" placeholder="Ex: Eletrônicos" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput formControlName="descricao" rows="3" placeholder="Descrição opcional..."></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="onSave()">{{ data.categoria ? 'Salvar' : 'Criar' }}</button>
+</mat-dialog-actions>

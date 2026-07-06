@@ -1,0 +1,143 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Vendas</h2>
+    <span class="record-count">{{ totalRecords() }} registros</span>
+  </div>
+  
+  <div style="display: flex; gap: 12px; align-items: center;">
+    <!-- Indicador de Status da Rede / Offline -->
+    <div *ngIf="!syncService.isOnline()" style="display: flex; align-items: center; gap: 8px; color: #ef4444; font-weight: 500; font-size: 14px;">
+      <mat-icon>wifi_off</mat-icon> Modo Offline
+    </div>
+    
+    <div *ngIf="syncService.isOnline()" style="display: flex; align-items: center; gap: 8px; color: #22c55e; font-weight: 500; font-size: 14px;">
+      <mat-icon>wifi</mat-icon> Online
+    </div>
+
+    <!-- Fila de Sincronização -->
+    <button mat-stroked-button *ngIf="syncService.pendingSyncCount() > 0" (click)="syncService.syncPendingVendas()" [disabled]="syncService.isSyncing() || !syncService.isOnline()" color="warn" matTooltip="Clique para enviar as vendas offline para o servidor">
+      <mat-icon>cloud_upload</mat-icon>
+      Fila: {{ syncService.pendingSyncCount() }}
+    </button>
+
+    <!-- Botão de Atualizar Catálogo -->
+    <button mat-stroked-button (click)="syncCatalog()" [disabled]="syncService.isSyncing() || !syncService.isOnline()" color="primary" matTooltip="Baixar catálogo para uso Offline">
+      <mat-icon [class.spin-icon]="syncService.isSyncing()">sync</mat-icon> 
+      Sincronizar Catálogo
+    </button>
+
+    <button mat-flat-button color="primary" (click)="openDialog()">
+      <mat-icon>add</mat-icon> Nova Venda
+    </button>
+  </div>
+</div>
+
+<!-- Quick Scanner Bar for POS Initiations -->
+<div class="quick-pdv-bar nexa-card" style="margin-bottom: 24px; padding: 16px 20px; border-radius: 12px; background: rgba(249, 115, 22, 0.08) !important; border: 1px solid rgba(249, 115, 22, 0.25);">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" style="width: 100%; margin-bottom: 0;" class="nexa-scan-field">
+    <mat-icon matPrefix color="primary" style="margin-right: 8px;">qr_code_scanner</mat-icon>
+    <mat-label style="font-weight: 500; color: var(--nexa-text-secondary);">Cód. Barras / SKU</mat-label>
+    <input matInput 
+           type="text" 
+           placeholder="Bipe ou digite o código..." 
+           [ngModel]="quickScanBarcode" 
+           (ngModelChange)="quickScanBarcode = $event"
+           (keydown.enter)="onQuickBarcodeScan($event)" />
+    <span matSuffix class="shortcut-suffix" style="opacity: 0.5; font-size: 0.8rem; padding-left: 8px;">[F1]</span>
+  </mat-form-field>
+</div>
+
+<div class="filters-bar nexa-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar</mat-label>
+    <input matInput [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)" placeholder="Cliente, CPF/CNPJ..." />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+  <nexa-select label="Status" class="filter-field" [ngModel]="selectedStatus()" (ngModelChange)="onStatusChange($event)">
+      <mat-option [value]="null">Todos</mat-option>
+      <mat-option value="RASCUNHO">Rascunho</mat-option>
+      <mat-option value="CONFIRMADA">Confirmada</mat-option>
+      <mat-option value="FATURADA">Faturada</mat-option>
+      <mat-option value="CANCELADA">Cancelada</mat-option>
+    </nexa-select>
+</div>
+
+<div class="table-container nexa-card">
+  <table mat-table [dataSource]="vendas()" class="nexa-table">
+    <ng-container matColumnDef="numero">
+      <th mat-header-cell *matHeaderCellDef>Nº</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="sku-cell">{{ row.numero ? '#' + row.numero : '—' }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="cliente">
+      <th mat-header-cell *matHeaderCellDef>Cliente</th>
+      <td mat-cell *matCellDef="let row"><span class="nome-cell">{{ row.cliente?.nome || 'Consumidor Final' }}</span></td>
+    </ng-container>
+    <ng-container matColumnDef="dataVenda">
+      <th mat-header-cell *matHeaderCellDef class="hide-mobile">Data</th>
+      <td mat-cell *matCellDef="let row" class="hide-mobile">{{ row.dataVenda | date:'dd/MM/yyyy' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="valorTotal">
+      <th mat-header-cell *matHeaderCellDef>Valor Total</th>
+      <td mat-cell *matCellDef="let row">R$ {{ row.valorTotal | number:'1.2-2' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="formaPagamento">
+      <th mat-header-cell *matHeaderCellDef class="hide-mobile">Pagamento</th>
+      <td mat-cell *matCellDef="let row" class="hide-mobile">
+        <span class="pagamento-badge">{{ getFormaPagamentoLabel(row.formaPagamento) }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let row">
+        <span class="status-badge" [ngClass]="getStatusClass(row.status)">{{ getStatusLabel(row.status) }}</span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef>Ações</th>
+      <td mat-cell *matCellDef="let row">
+        @if (row.status === 'RASCUNHO') {
+          <button mat-icon-button (click)="openDialog(row)" matTooltip="Editar"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button (click)="onConfirmar(row)" matTooltip="Confirmar Venda" color="primary"><mat-icon>check_circle</mat-icon></button>
+          <button mat-icon-button (click)="onRemove(row)" matTooltip="Excluir"><mat-icon>delete</mat-icon></button>
+        }
+        @if (row.status === 'CONFIRMADA') {
+          <button mat-icon-button (click)="onFaturar(row)" matTooltip="Faturar" color="primary"><mat-icon>receipt_long</mat-icon></button>
+          <button mat-icon-button (click)="onImprimirCupom(row)" matTooltip="Imprimir Cupom 80mm"><mat-icon>print</mat-icon></button>
+          @if (!row.entrega && hasProFeatures()) {
+            <button mat-icon-button (click)="onAgendarEntrega(row)" matTooltip="Agendar Entrega" color="accent"><mat-icon>local_shipping</mat-icon></button>
+          }
+          <button mat-icon-button (click)="onCancelar(row)" matTooltip="Cancelar Venda" color="warn"><mat-icon>cancel</mat-icon></button>
+        }
+        @if (row.status === 'FATURADA') {
+          <button mat-icon-button (click)="onImprimirCupom(row)" matTooltip="Imprimir Cupom 80mm"><mat-icon>print</mat-icon></button>
+          @if (!row.entrega && hasProFeatures()) {
+            <button mat-icon-button (click)="onAgendarEntrega(row)" matTooltip="Agendar Entrega" color="accent"><mat-icon>local_shipping</mat-icon></button>
+          }
+        }
+        @if (row.status === 'CANCELADA') {
+          <button mat-icon-button (click)="onImprimirCupom(row)" matTooltip="Imprimir Cupom 80mm"><mat-icon>print</mat-icon></button>
+        }
+        @if (row.entrega && hasProFeatures()) {
+          <button mat-icon-button [matTooltip]="'Entrega Agendada (' + row.entrega.status + ')'" disabled>
+            <mat-icon style="color: #22c55e;">local_shipping</mat-icon>
+          </button>
+        }
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+  </table>
+
+  @if (vendas().length === 0 && !loading()) {
+    <div class="empty-state">
+      <mat-icon>point_of_sale</mat-icon>
+      <p>Nenhuma venda encontrada</p>
+      <button mat-stroked-button color="primary" (click)="openDialog()">Criar primeira venda</button>
+    </div>
+  }
+
+  <mat-paginator [length]="totalRecords()" [pageSize]="pageSize()" [pageIndex]="currentPage() - 1"
+    [pageSizeOptions]="[10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
+</div>

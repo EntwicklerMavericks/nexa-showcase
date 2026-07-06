@@ -1,0 +1,168 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Central de Logística e Despacho</h2>
+    <span class="record-count">Acompanhe e monte as rotas de entrega</span>
+  </div>
+  <div class="header-actions">
+    <!-- Botão de Ação Lote de Carga -->
+    @if (selectedEntregas().size > 0 && activeTab() === 'pendentes') {
+      <button mat-flat-button color="primary" (click)="openMontarCargaDialog()" class="action-btn-lote">
+        <mat-icon>local_shipping</mat-icon> Montar Carga ({{ selectedEntregas().size }} selecionados)
+      </button>
+    }
+  </div>
+</div>
+
+<!-- Navegação de Abas Premium -->
+<div class="tabs-container">
+  <button class="nexa-tab-btn" [class.active]="activeTab() === 'pendentes'" (click)="setTab('pendentes')">
+    <mat-icon>hourglass_empty</mat-icon>
+    Entregas Pendentes
+    <span class="tab-badge" *ngIf="entregasPendentes().length > 0">{{ entregasPendentes().length }}</span>
+  </button>
+  <button class="nexa-tab-btn" [class.active]="activeTab() === 'cargas'" (click)="setTab('cargas')">
+    <mat-icon>local_shipping</mat-icon>
+    Cargas e Romaneios
+    <span class="tab-badge" *ngIf="cargasAtivasCount() > 0">{{ cargasAtivasCount() }}</span>
+  </button>
+</div>
+
+<div class="main-content-area">
+  <!-- ABA 1: ENTREGAS PENDENTES -->
+  @if (activeTab() === 'pendentes') {
+    <div class="table-container nexa-card">
+      <table class="nexa-table-custom">
+        <thead>
+          <tr>
+            <th style="width: 50px; text-align: center">
+              <input type="checkbox" (change)="toggleAll($event)" [checked]="isAllSelected()" />
+            </th>
+            <th>Venda</th>
+            <th>Cliente</th>
+            <th>Endereço de Entrega</th>
+            <th>Cidade</th>
+            <th>Materiais</th>
+            <th style="text-align: right">Valor Venda</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ent of entregasPendentes(); track ent.id) {
+            <tr class="table-row" [class.selected]="selectedEntregas().has(ent.id)" (click)="toggleSelection(ent.id)">
+              <td style="text-align: center" (click)="$event.stopPropagation()">
+                <input type="checkbox" [checked]="selectedEntregas().has(ent.id)" (change)="toggleSelection(ent.id)" />
+              </td>
+              <td style="font-weight: 600">#{{ ent.venda?.numero || ent.vendaId }}</td>
+              <td><strong>{{ ent.venda?.cliente?.nome || 'Consumidor Final' }}</strong></td>
+              <td>{{ ent.enderecoEntrega }}</td>
+              <td>{{ ent.cidade }} - {{ ent.estado || 'SP' }}</td>
+              <td>
+                <span class="materials-summary" [matTooltip]="getMaterialsTooltip(ent)">
+                  {{ getMaterialsCount(ent) }} itens
+                </span>
+              </td>
+              <td style="text-align: right; font-weight: bold; color: #f97316">
+                R$ {{ ent.venda?.valorTotal | number:'1.2-2' }}
+              </td>
+            </tr>
+          }
+          @if (entregasPendentes().length === 0) {
+            <tr>
+              <td colspan="7" class="empty-row">
+                <mat-icon>check_circle</mat-icon>
+                <p>Nenhuma entrega pendente no momento! Todas as vendas estão despachadas.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ABA 2: CARGAS & ROMANEIOS -->
+  @if (activeTab() === 'cargas') {
+    <div class="cargas-grid">
+      @for (carga of cargas(); track carga.id) {
+        <div class="carga-card nexa-card">
+          <!-- Header do Card -->
+          <div class="carga-card-header">
+            <div class="title-section">
+              <h3>Carga #{{ carga.numero }}</h3>
+              <span class="date">{{ carga.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <span class="status-badge" [class]="carga.status.toLowerCase()">
+              {{ carga.status }}
+            </span>
+          </div>
+
+          <!-- Detalhes do Romaneio -->
+          <div class="carga-card-details">
+            <div class="detail-item">
+              <mat-icon>person</mat-icon>
+              <span>Motorista: <strong>{{ carga.motorista }}</strong></span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>credit_card</mat-icon>
+              <span>Veículo / Placa: <strong>{{ carga.placaVeiculo || '—' }}</strong></span>
+            </div>
+
+            <!-- Progresso de Entregas -->
+            <div class="progress-section">
+              <div class="progress-labels">
+                <span>Desembarques Concluídos</span>
+                <span>{{ carga.progresso?.concluidas }} de {{ carga.progresso?.total }}</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" [style.width.%]="getProgressPercent(carga)"></div>
+              </div>
+            </div>
+
+            <!-- Lista de Entregas vinculadas -->
+            <div class="nested-deliveries-list">
+              <h4>Fila de Paradas (Entregas)</h4>
+              @for (ent of carga.entregas; track ent.id; let idx = $index) {
+                <div class="delivery-row" [class]="ent.status.toLowerCase()">
+                  <span class="stop-badge">{{ idx + 1 }}</span>
+                  <div class="stop-details">
+                    <span class="stop-name">{{ ent.venda?.cliente?.nome || 'Consumidor Final' }}</span>
+                    <span class="stop-address">{{ ent.enderecoEntrega }}</span>
+                  </div>
+                  <div class="stop-status-actions">
+                    <span class="status-pill">{{ ent.status }}</span>
+                    <!-- Botão de Ação para Baixar Entrega (Se Carga estiver EM_ROTA) -->
+                    @if (carga.status === 'EM_ROTA' && ent.status === 'EM_ROTA') {
+                      <button mat-icon-button color="primary" matTooltip="Dar Baixa na Entrega" (click)="openBaixaEntrega(ent)">
+                        <mat-icon>check_circle</mat-icon>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Ações do Card -->
+          <div class="carga-card-actions">
+            <button mat-stroked-button color="primary" (click)="openRomaneioPrint(carga.id)">
+              <mat-icon>receipt_long</mat-icon> Romaneio
+            </button>
+
+            <!-- Iniciar Rota (Se PREPARACAO) -->
+            @if (carga.status === 'PREPARACAO') {
+              <button mat-flat-button color="primary" (click)="iniciarRota(carga.id)">
+                <mat-icon>play_arrow</mat-icon> Iniciar Rota
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (cargas().length === 0) {
+        <div class="empty-state-full nexa-card">
+          <mat-icon>local_shipping</mat-icon>
+          <h3>Nenhum romaneio de carga gerado ainda</h3>
+          <p>Volte na aba "Entregas Pendentes" para selecionar entregas e despachar seu primeiro caminhão.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

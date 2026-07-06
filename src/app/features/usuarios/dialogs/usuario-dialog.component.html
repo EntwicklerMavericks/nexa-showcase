@@ -1,0 +1,60 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>{{ data.usuario ? 'edit' : 'person_add' }}</mat-icon>
+  {{ data.usuario ? 'Editar Usuário' : 'Novo Usuário' }}
+</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="tab-content" style="display: flex; flex-direction: column; gap: 16px; padding-top: 16px;">
+    
+    <!-- Top Center: Avatar -->
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 8px;">
+      <div class="avatar-upload-container" style="position: relative; width: 140px; height: 140px; border-radius: 50%; overflow: hidden; border: 2px solid var(--nexa-primary); box-shadow: 0 8px 24px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; background: var(--nexa-surface-light);" (click)="abrirFoto()">
+        @if (form.get('avatarUrl')?.value) {
+          <img [src]="form.get('avatarUrl')?.value" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+          <div class="avatar-hover-overlay" title="Ver foto em tamanho real">
+            <mat-icon style="color: white; font-size: 32px; width: 32px; height: 32px;">zoom_in</mat-icon>
+          </div>
+        } @else {
+          <mat-icon style="font-size: 80px; width: 80px; height: 80px; color: var(--nexa-text-muted); opacity: 0.5;">person</mat-icon>
+        }
+      </div>
+      <div style="display: flex; gap: 8px; width: 100%; justify-content: center; align-items: center;">
+        <button mat-stroked-button type="button" color="primary" (click)="fileInput.click()" style="border-radius: 20px; padding: 0 24px;">
+          <mat-icon>photo_camera</mat-icon> {{ form.get('avatarUrl')?.value ? 'Alterar Foto' : 'Adic. / Editar Foto' }}
+        </button>
+        @if (form.get('avatarUrl')?.value) {
+          <button mat-icon-button type="button" color="warn" (click)="removeFoto()" matTooltip="Remover foto" style="background: rgba(239, 68, 68, 0.1);">
+            <mat-icon>delete</mat-icon>
+          </button>
+        }
+      </div>
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none;" />
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nome Completo</mat-label>
+      <input matInput formControlName="nome" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>E-mail</mat-label>
+      <input matInput type="email" formControlName="email" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ data.usuario ? 'Nova Senha (deixe em branco para manter)' : 'Senha' }}</mat-label>
+      <input matInput type="password" formControlName="senha" />
+    </mat-form-field>
+    <nexa-select label="Perfil de Acesso" class="full-width" formControlName="role">
+        <mat-option value="ADMIN">Administrador</mat-option>
+        <mat-option value="GERENTE">Gerente</mat-option>
+        <mat-option value="VENDEDOR">Vendedor</mat-option>
+        <mat-option value="CAIXA">Caixa</mat-option>
+      </nexa-select>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="onSave()">
+    {{ data.usuario ? 'Salvar' : 'Criar' }}
+  </button>
+</mat-dialog-actions>

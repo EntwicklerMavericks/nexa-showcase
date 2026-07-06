@@ -1,0 +1,122 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>{{ data.nfe ? 'edit' : 'receipt_long' }}</mat-icon>
+  {{ data.nfe ? 'Editar NF-e' : 'Nova NF-e' }}
+</h2>
+<mat-dialog-content>
+  <mat-tab-group animationDuration="200ms">
+    <mat-tab label="Dados Gerais">
+      <form [formGroup]="form" class="tab-content">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Natureza da Operação</mat-label>
+          <input matInput formControlName="naturezaOperacao" placeholder="Ex: Venda de Mercadoria" />
+        </mat-form-field>
+        <div class="form-row">
+          <nexa-select label="Tipo de Operação" class="flex-1" formControlName="tipoOperacao">
+              <mat-option value="SAIDA">Saída</mat-option>
+              <mat-option value="ENTRADA">Entrada</mat-option>
+            </nexa-select>
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Série</mat-label>
+            <input matInput type="number" formControlName="serie" />
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="flex-2">
+            <mat-label>Destinatário (Nome / Razão Social)</mat-label>
+            <input matInput formControlName="destinatarioNome" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>CPF / CNPJ</mat-label>
+            <input matInput formControlName="destinatarioCpfCnpj" mask="000.000.000-00||00.000.000/0000-00" />
+            @if (form.get('destinatarioCpfCnpj')?.hasError('required')) {
+              <mat-error>Campo obrigatório</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Itens">
+      <div class="tab-content">
+        <div class="items-header">
+          <h3>Produtos da NF-e</h3>
+          <button mat-stroked-button color="primary" (click)="addItem()" type="button">
+            <mat-icon>add</mat-icon> Adicionar Item
+          </button>
+        </div>
+        @for (item of itens.controls; track $index) {
+          <div class="item-row" [formGroup]="getItemGroup($index)">
+            <nexa-select label="Produto" class="flex-2" formControlName="produtoId" (selectionChange)="onProdutoChange($event.value, $index)">
+                @for (prod of produtos; track prod.id) {
+                  <mat-option [value]="prod.id">{{ prod.sku }} — {{ prod.nome }}</mat-option>
+                }
+              </nexa-select>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Qtd</mat-label>
+              <input matInput type="number" formControlName="quantidade" min="1" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Vlr Unitário</mat-label>
+              <span matPrefix>R$&nbsp;</span>
+              <input matInput type="number" step="0.01" formControlName="valorUnitario" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Desconto</mat-label>
+              <span matPrefix>R$&nbsp;</span>
+              <input matInput type="number" step="0.01" formControlName="valorDesconto" />
+            </mat-form-field>
+            <button mat-icon-button color="warn" (click)="removeItem($index)" type="button" matTooltip="Remover item">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+        @if (itens.controls.length === 0) {
+          <div class="empty-state" style="padding: 32px;">
+            <mat-icon>shopping_cart</mat-icon>
+            <p>Nenhum item adicionado. Clique em "Adicionar Item" acima.</p>
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Valores">
+      <form [formGroup]="form" class="tab-content">
+        <div class="values-summary">
+          <div class="value-row">
+            <span class="value-label">Subtotal (Produtos)</span>
+            <span class="value-amount">R$ {{ calcularSubtotal() | number:'1.2-2' }}</span>
+          </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Desconto Geral (R$)</mat-label>
+            <span matPrefix>R$&nbsp;</span>
+            <input matInput type="number" step="0.01" formControlName="valorDesconto" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Frete (R$)</mat-label>
+            <span matPrefix>R$&nbsp;</span>
+            <input matInput type="number" step="0.01" formControlName="valorFrete" />
+          </mat-form-field>
+          <div class="value-row total">
+            <span class="value-label">TOTAL DA NF-e</span>
+            <span class="value-amount nexa-gradient-text">R$ {{ calcularTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Observações">
+      <form [formGroup]="form" class="tab-content">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Informações Complementares</mat-label>
+          <textarea matInput formControlName="observacoes" rows="5" placeholder="Observações adicionais..."></textarea>
+        </mat-form-field>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid || itens.length === 0" (click)="onSave()">
+    {{ data.nfe ? 'Salvar' : 'Criar NF-e' }}
+  </button>
+</mat-dialog-actions>

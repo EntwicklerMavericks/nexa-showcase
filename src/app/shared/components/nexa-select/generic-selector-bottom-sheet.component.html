@@ -1,0 +1,46 @@
+<div class="sheet-header">
+  <h3>{{ data.title }}</h3>
+  <button mat-icon-button (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="search-container">
+  <mat-icon class="search-icon">search</mat-icon>
+  <input 
+    type="text" 
+    class="search-input" 
+    placeholder="Buscar..." 
+    [(ngModel)]="searchQuery" 
+    (ngModelChange)="filterOptions()"
+  />
+  @if (searchQuery) {
+    <button mat-icon-button class="clear-btn" (click)="searchQuery = ''; filterOptions()">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</div>
+
+<mat-nav-list class="options-list">
+  @for (opt of filteredOptions; track opt.label) {
+    <a mat-list-item class="option-item" (click)="selectOption(opt)" [class.selected]="opt.value === data.selectedValue">
+      <div class="option-content">
+        <div class="labels">
+          <span class="main-label">{{ opt.label }}</span>
+          @if (opt.subLabel) {
+            <span class="sub-label">{{ opt.subLabel }}</span>
+          }
+        </div>
+        @if (opt.value === data.selectedValue) {
+          <mat-icon class="check-icon">check</mat-icon>
+        }
+      </div>
+    </a>
+  }
+  @if (filteredOptions.length === 0) {
+    <div class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>Nenhum resultado encontrado.</p>
+    </div>
+  }
+</mat-nav-list>

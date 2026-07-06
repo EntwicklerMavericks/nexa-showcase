@@ -1,0 +1,88 @@
+<div class="page-header">
+  <div class="header-left">
+    <h2>Produtos</h2>
+    <span class="record-count">{{ totalRecords() }} registros</span>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button mat-stroked-button color="primary" (click)="openImportDialog()">
+      <mat-icon>upload_file</mat-icon> Importar CSV
+    </button>
+    <button mat-flat-button color="primary" (click)="openDialog()">
+      <mat-icon>add</mat-icon> Novo Produto
+    </button>
+  </div>
+</div>
+
+<div class="filters-bar nexa-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar</mat-label>
+    <input matInput [ngModel]="searchTerm()" (ngModelChange)="onSearchChange($event)" placeholder="Nome, SKU ou código de barras..." />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+  <nexa-select label="Categoria" class="filter-field" [ngModel]="selectedCategoria()" (ngModelChange)="onCategoriaChange($event)">
+      <mat-option [value]="null">Todas</mat-option>
+      @for (cat of categorias(); track cat.id) {
+        <mat-option [value]="cat.id">{{ cat.nome }}</mat-option>
+      }
+    </nexa-select>
+</div>
+
+<div class="table-container nexa-card">
+  <nexa-data-table
+    [data]="produtos()"
+    [columns]="columns"
+    [totalRecords]="totalRecords()"
+    [pageSize]="pageSize()"
+    [pageIndex]="currentPage() - 1"
+    [loading]="loading()"
+    emptyIcon="inventory_2"
+    emptyMessage="Nenhum produto encontrado"
+    emptyActionLabel="Cadastrar primeiro produto"
+    (pageChange)="onPageChange($event)"
+    (emptyActionClick)="openDialog()"
+  >
+    <!-- Custom Cells -->
+    <ng-template nexaCustomCell="sku" let-row>
+      <span class="sku-cell">{{ row.sku }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="nome" let-row>
+      <span class="nome-cell">{{ row.nome }}</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="categoria" let-row>
+      {{ row.categoria?.nome || '—' }}
+    </ng-template>
+
+    <ng-template nexaCustomCell="precoCusto" let-row>
+      R$ {{ row.precoCusto | number:'1.2-2' }} / {{ row.unidade }}
+    </ng-template>
+
+    <ng-template nexaCustomCell="precoVenda" let-row>
+      R$ {{ row.precoVenda | number:'1.2-2' }} / {{ row.unidade }}
+    </ng-template>
+
+    <ng-template nexaCustomCell="margem" let-row>
+      <span class="margem-chip" [class]="getMargemClass(row.margemLucro)">{{ row.margemLucro | number:'1.1-1' }}%</span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="estoque" let-row>
+      <span [class.stock-low]="row.estoqueAtual * 1 <= row.estoqueMinimo * 1">{{ row.estoqueAtual }} {{ row.unidade }}</span>
+      @if (row.estoqueAtual * 1 <= row.estoqueMinimo * 1) { <mat-icon class="alert-icon" color="warn">warning</mat-icon> }
+    </ng-template>
+
+    <ng-template nexaCustomCell="status" let-row>
+      <span class="status-badge" [class.active]="row.ativo" [class.inactive]="!row.ativo">
+        {{ row.ativo ? 'Ativo' : 'Inativo' }}
+      </span>
+    </ng-template>
+
+    <ng-template nexaCustomCell="acoes" let-row>
+      <button mat-icon-button (click)="openEtiquetasDialog(row)" matTooltip="Imprimir Etiquetas" [disabled]="!row.ativo">
+        <mat-icon>qr_code</mat-icon>
+      </button>
+      <button mat-icon-button (click)="openDialog(row)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button (click)="onRemove(row)" [disabled]="!row.ativo"><mat-icon>block</mat-icon></button>
+    </ng-template>
+  </nexa-data-table>
+</div>

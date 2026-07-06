@@ -1,0 +1,129 @@
+<div class="romaneio-container print-area">
+  <!-- Header do Dialog (Escondido na Impressão) -->
+  <div class="dialog-header no-print">
+    <h2 class="dialog-title">
+      <mat-icon color="primary">receipt_long</mat-icon>
+      Visualizar Romaneio #{{ data.cargaId }}
+    </h2>
+    <div class="header-actions">
+      <button mat-flat-button color="primary" (click)="onImprimir()">
+        <mat-icon>print</mat-icon> Imprimir Romaneio (A4)
+      </button>
+      <button mat-button mat-dialog-close>Fechar</button>
+    </div>
+  </div>
+
+  <!-- Corpo do Romaneio -->
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Carregando dados do romaneio...</p>
+    </div>
+  } @else if (carga()) {
+    <div class="romaneio-paper">
+      <!-- CABEÇALHO DA CARGA -->
+      <div class="paper-header">
+        <div class="left">
+          <h1 class="main-title">NEXA ERP — ROMANEIO DE CARGA #{{ carga()?.numero }}</h1>
+          <p class="subtitle">Controle de Despacho e Fila de Entrega</p>
+        </div>
+        <div class="right">
+          <span class="status-badge" [class]="carga()?.status?.toLowerCase()">
+            {{ carga()?.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="label">Motorista / Transportador</span>
+          <span class="value">{{ carga()?.motorista }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Veículo / Placa</span>
+          <span class="value">{{ carga()?.placaVeiculo || '—' }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Data de Saída</span>
+          <span class="value">{{ carga()?.dataSaida ? (carga()?.dataSaida | date:'dd/MM/yyyy HH:mm') : 'Pendente' }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Entregas</span>
+          <span class="value">{{ carga()?.entregas?.length }} pontos</span>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 1: ROMANEIO DE CARREGAMENTO (CONSOLIDADO) -->
+      <div class="paper-section">
+        <h2 class="section-title">1. Lista de Carregamento Consolidada (O que carregar no caminhão)</h2>
+        <table class="romaneio-table">
+          <thead>
+            <tr>
+              <th style="width: 15%">SKU</th>
+              <th style="width: 55%">Produto / Descrição</th>
+              <th style="width: 15%; text-align: right">Qtd Total</th>
+              <th style="width: 15%; text-align: center">Conferido</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of carga()?.romaneioCarregamento; track item.produtoId) {
+              <tr>
+                <td><code>{{ item.sku }}</code></td>
+                <td><strong>{{ item.nome }}</strong></td>
+                <td style="text-align: right; font-weight: bold">{{ item.quantidade }} {{ item.unidade }}</td>
+                <td style="text-align: center"><span class="check-box"></span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="page-break"></div>
+
+      <!-- SEÇÃO 2: ENTREGAS SEQUENCIAIS -->
+      <div class="paper-section">
+        <h2 class="section-title">2. Roteiro e Fila de Desembarque (Pontos de Entrega)</h2>
+        
+        @for (ent of carga()?.entregas; track ent.id; let idx = $index) {
+          <div class="entrega-drop-card">
+            <div class="drop-header">
+              <div class="drop-number">PONTO #{{ idx + 1 }}</div>
+              <div class="drop-venda">Venda #{{ ent.venda?.numero || ent.vendaId }}</div>
+              <div class="drop-status" [class]="ent.status.toLowerCase()">{{ ent.status }}</div>
+            </div>
+
+            <div class="drop-grid">
+              <div class="drop-info">
+                <p><strong>Cliente:</strong> {{ ent.venda?.cliente?.nome || 'Consumidor Final' }}</p>
+                <p><strong>Endereço:</strong> {{ ent.enderecoEntrega }}</p>
+                <p><strong>Cidade/UF:</strong> {{ ent.cidade }} - {{ ent.estado || 'SP' }}</p>
+                <p><strong>Telefone:</strong> {{ ent.venda?.cliente?.telefone || '—' }}</p>
+                @if (ent.observacoes) {
+                  <p class="drop-obs"><strong>Obs:</strong> {{ ent.observacoes }}</p>
+                }
+              </div>
+
+              <div class="drop-items">
+                <p class="items-title">Materiais deste Ponto:</p>
+                <ul class="items-list">
+                  @for (item of ent.venda?.itens; track item.id) {
+                    <li>
+                      <strong>{{ item.quantidade }} {{ item.produto.unidade }}</strong> — {{ item.produto.nome }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+
+            <!-- Campo de Assinatura -->
+            <div class="signature-block">
+              <div class="sign-line">Recebido por (Nome Legível): _______________________________________</div>
+              <div class="sign-line">Documento (RG/CPF): _____________________ Data: ____/____/____ Hora: ____:____</div>
+              <div class="sign-line">Assinatura: ___________________________________________________________</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

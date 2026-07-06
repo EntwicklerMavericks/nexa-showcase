@@ -1,0 +1,346 @@
+<div class="financeiro-container nexa-fade-in">
+  <div class="page-header">
+    <div class="header-left">
+      <h2 class="nexa-gradient-text">Financeiro</h2>
+      <span class="record-count">Contas a Pagar &amp; Receber</span>
+    </div>
+  </div>
+
+  <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()" animationDuration="300ms">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- ABA 1: DASHBOARD FINANCEIRO                                           -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <mat-tab label="Dashboard">
+      <div class="dashboard-content nexa-fade-in">
+
+        <!-- Card de Lucro Real (Nicho Material de Construção) -->
+        <div class="lucro-real-card nexa-fade-in" [class.positivo]="(dashboard()?.lucroReal?.total ?? 0) >= 0" [class.negativo]="(dashboard()?.lucroReal?.total ?? 0) < 0">
+          <div class="lucro-header">
+            <mat-icon>trending_up</mat-icon>
+            <span>Lucro Estimado do Mês</span>
+          </div>
+          <div class="lucro-valor">
+            R$ {{ dashboard()?.lucroReal?.total | number:'1.2-2' }}
+          </div>
+          
+          <div class="lucro-details">
+            <div class="lucro-detail-item">
+              <span class="lbl">Receitas Faturadas</span>
+              <span class="val text-green-500">+ R$ {{ dashboard()?.lucroReal?.receita | number:'1.2-2' }}</span>
+            </div>
+            <div class="lucro-detail-item">
+              <span class="lbl" matTooltip="Custo da Mercadoria Vendida (Qtd x Preço de Custo)">Custo dos Produtos</span>
+              <span class="val text-orange-500">- R$ {{ dashboard()?.lucroReal?.cmv | number:'1.2-2' }}</span>
+            </div>
+            <div class="lucro-detail-item">
+              <span class="lbl" matTooltip="Despesas pagas no mês (exceto compras de estoque)">Despesas Gerais</span>
+              <span class="val text-red-500">- R$ {{ dashboard()?.lucroReal?.despesas | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="lucro-glow"></div>
+        </div>
+
+        @if ((dashboard()?.lucroReal?.total ?? 0) < 0) {
+          <div class="lucro-alerta-negativo nexa-fade-in">
+            <mat-icon>lightbulb</mat-icon>
+            <span><strong>Atenção:</strong> Suas despesas e custos estão maiores que as receitas geradas neste mês. Revise suas Contas a Pagar ou faça promoções para girar o estoque!</span>
+          </div>
+        }
+
+        <!-- Mini KPIs de Contas -->
+        <div class="kpi-mini-grid">
+          <div class="mini-kpi-card" matTooltip="Contas a Receber Atrasadas">
+            <mat-icon class="text-orange-500">warning</mat-icon>
+            <div class="info">
+              <span class="lbl">Clientes Inadimplentes</span>
+              <span class="val">R$ {{ dashboard()?.receberAtrasado | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="mini-kpi-card" matTooltip="Contas a Pagar Atrasadas">
+            <mat-icon class="text-red-500">money_off</mat-icon>
+            <div class="info">
+              <span class="lbl">Contas Atrasadas</span>
+              <span class="val">R$ {{ dashboard()?.pagarAtrasado | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="mini-kpi-card" matTooltip="Dinheiro em Caixa (Recebimentos - Pagamentos)">
+            <mat-icon class="text-blue-400">account_balance_wallet</mat-icon>
+            <div class="info">
+              <span class="lbl">Saldo de Caixa</span>
+              <span class="val">R$ {{ dashboard()?.saldoCaixa | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximos Vencimentos -->
+        <div class="vencimentos-section">
+          <div class="section-title">
+            <mat-icon>event</mat-icon>
+            <span>Próximos Vencimentos</span>
+          </div>
+          <div class="table-container nexa-card">
+            <table mat-table [dataSource]="proximosVencimentos()" class="nexa-table">
+              <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                <td mat-cell *matCellDef="let row">
+                  <span class="tipo-badge" [ngClass]="getTipoClass(row.tipo)">{{ getTipoLabel(row.tipo) }}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="descricao">
+                <th mat-header-cell *matHeaderCellDef>Descrição</th>
+                <td mat-cell *matCellDef="let row"><span class="nome-cell">{{ row.descricao }}</span></td>
+              </ng-container>
+              <ng-container matColumnDef="entidade">
+                <th mat-header-cell *matHeaderCellDef class="hide-mobile">Cliente / Fornecedor</th>
+                <td mat-cell *matCellDef="let row" class="hide-mobile">{{ row.cliente?.nome || row.fornecedor?.nome || '—' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="valor">
+                <th mat-header-cell *matHeaderCellDef>Valor</th>
+                <td mat-cell *matCellDef="let row">R$ {{ row.valor | number:'1.2-2' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="vencimento">
+                <th mat-header-cell *matHeaderCellDef>Vencimento</th>
+                <td mat-cell *matCellDef="let row">{{ row.dataVencimento | date:'dd/MM/yyyy' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let row">
+                  <span class="status-badge" [ngClass]="getStatusClass(row.status)">{{ getStatusLabel(row.status) }}</span>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsVencimentos"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsVencimentos;" class="table-row"></tr>
+            </table>
+
+            @if (proximosVencimentos().length === 0 && !loadingDashboard()) {
+              <div class="empty-state">
+                <mat-icon>event_available</mat-icon>
+                <p>Nenhum vencimento próximo</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- ABA 2: CONTAS A RECEBER                                               -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <mat-tab label="Contas a Receber">
+      <div class="tab-panel nexa-fade-in">
+        <div class="page-header">
+          <div class="header-left">
+            <h2>Contas a Receber</h2>
+            <span class="record-count">{{ totalReceber() }} registros</span>
+          </div>
+          <button mat-flat-button color="primary" (click)="openNovoReceber()">
+            <mat-icon>add</mat-icon> Novo Lançamento
+          </button>
+        </div>
+
+        <div class="filters-bar nexa-card">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Buscar</mat-label>
+            <input matInput [ngModel]="searchReceber()" (ngModelChange)="onSearchReceberChange($event)" placeholder="Descrição, cliente..." />
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+          <nexa-select label="Status" class="filter-field" [ngModel]="statusReceber()" (ngModelChange)="onStatusReceberChange($event)">
+              <mat-option [value]="null">Todos</mat-option>
+              <mat-option value="PENDENTE">Pendente</mat-option>
+              <mat-option value="PAGO">Pago</mat-option>
+              <mat-option value="ATRASADO">Atrasado</mat-option>
+              <mat-option value="CANCELADO">Cancelado</mat-option>
+            </nexa-select>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Data Início</mat-label>
+            <input matInput type="date" [ngModel]="dataInicioReceber()" (ngModelChange)="onDataInicioReceberChange($event)" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Data Fim</mat-label>
+            <input matInput type="date" [ngModel]="dataFimReceber()" (ngModelChange)="onDataFimReceberChange($event)" />
+          </mat-form-field>
+        </div>
+
+        <div class="table-container nexa-card">
+          <table mat-table [dataSource]="contasReceber()" class="nexa-table">
+            <ng-container matColumnDef="descricao">
+              <th mat-header-cell *matHeaderCellDef>Descrição</th>
+              <td mat-cell *matCellDef="let row"><span class="nome-cell">{{ row.descricao }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="cliente">
+              <th mat-header-cell *matHeaderCellDef class="hide-mobile">Cliente</th>
+              <td mat-cell *matCellDef="let row" class="hide-mobile">{{ row.cliente?.nome || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="parcela">
+              <th mat-header-cell *matHeaderCellDef class="hide-mobile">Parcela</th>
+              <td mat-cell *matCellDef="let row" class="hide-mobile">
+                <span class="pagamento-badge">{{ row.parcelaAtual || 1 }}/{{ row.totalParcelas || 1 }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef>Valor</th>
+              <td mat-cell *matCellDef="let row">R$ {{ row.valor | number:'1.2-2' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="vencimento">
+              <th mat-header-cell *matHeaderCellDef>Vencimento</th>
+              <td mat-cell *matCellDef="let row">{{ row.dataVencimento | date:'dd/MM/yyyy' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status-badge" [ngClass]="getStatusClass(row.status)">{{ getStatusLabel(row.status) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
+              <td mat-cell *matCellDef="let row">
+                @if (row.status === 'PENDENTE' || row.status === 'ATRASADO') {
+                  <button mat-icon-button (click)="onBaixarReceber(row)" matTooltip="Baixar / Receber" color="primary">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                }
+                @if (row.status === 'PAGO' || row.status === 'RECEBIDO') {
+                  <button mat-icon-button (click)="onEstornarReceber(row)" matTooltip="Estornar Recebimento" color="warn">
+                    <mat-icon>undo</mat-icon>
+                  </button>
+                }
+                @if (!row.vendaId) {
+                  <button mat-icon-button (click)="onRemoveReceber(row)" matTooltip="Excluir">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+                @if (row.vendaId && (row.status === 'PAGO' || row.status === 'RECEBIDO')) {
+                  <span class="pagamento-badge">—</span>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsReceber"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsReceber;" class="table-row"></tr>
+          </table>
+
+          @if (contasReceber().length === 0 && !loadingReceber()) {
+            <div class="empty-state">
+              <mat-icon>receipt</mat-icon>
+              <p>Nenhuma conta a receber encontrada</p>
+              <button mat-stroked-button color="primary" (click)="openNovoReceber()">Registrar primeiro lançamento</button>
+            </div>
+          }
+
+          <mat-paginator [length]="totalReceber()" [pageSize]="pageSizeReceber()" [pageIndex]="pageReceber() - 1"
+            [pageSizeOptions]="[10, 20, 50]" (page)="onPageReceberChange($event)" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- ABA 3: CONTAS A PAGAR                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <mat-tab label="Contas a Pagar">
+      <div class="tab-panel nexa-fade-in">
+        <div class="page-header">
+          <div class="header-left">
+            <h2>Contas a Pagar</h2>
+            <span class="record-count">{{ totalPagar() }} registros</span>
+          </div>
+          <button mat-flat-button color="primary" (click)="openNovoPagar()">
+            <mat-icon>add</mat-icon> Novo Lançamento
+          </button>
+        </div>
+
+        <div class="filters-bar nexa-card">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Buscar</mat-label>
+            <input matInput [ngModel]="searchPagar()" (ngModelChange)="onSearchPagarChange($event)" placeholder="Descrição, fornecedor..." />
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+          <nexa-select label="Status" class="filter-field" [ngModel]="statusPagar()" (ngModelChange)="onStatusPagarChange($event)">
+              <mat-option [value]="null">Todos</mat-option>
+              <mat-option value="PENDENTE">Pendente</mat-option>
+              <mat-option value="PAGO">Pago</mat-option>
+              <mat-option value="ATRASADO">Atrasado</mat-option>
+              <mat-option value="CANCELADO">Cancelado</mat-option>
+            </nexa-select>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Data Início</mat-label>
+            <input matInput type="date" [ngModel]="dataInicioPagar()" (ngModelChange)="onDataInicioPagarChange($event)" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Data Fim</mat-label>
+            <input matInput type="date" [ngModel]="dataFimPagar()" (ngModelChange)="onDataFimPagarChange($event)" />
+          </mat-form-field>
+        </div>
+
+        <div class="table-container nexa-card">
+          <table mat-table [dataSource]="contasPagar()" class="nexa-table">
+            <ng-container matColumnDef="descricao">
+              <th mat-header-cell *matHeaderCellDef>Descrição</th>
+              <td mat-cell *matCellDef="let row"><span class="nome-cell">{{ row.descricao }}</span></td>
+            </ng-container>
+            <ng-container matColumnDef="fornecedor">
+              <th mat-header-cell *matHeaderCellDef class="hide-mobile">Fornecedor</th>
+              <td mat-cell *matCellDef="let row" class="hide-mobile">{{ row.fornecedor?.nome || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="parcela">
+              <th mat-header-cell *matHeaderCellDef class="hide-mobile">Parcela</th>
+              <td mat-cell *matCellDef="let row" class="hide-mobile">
+                <span class="pagamento-badge">{{ row.parcelaAtual || 1 }}/{{ row.totalParcelas || 1 }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef>Valor</th>
+              <td mat-cell *matCellDef="let row">R$ {{ row.valor | number:'1.2-2' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="vencimento">
+              <th mat-header-cell *matHeaderCellDef>Vencimento</th>
+              <td mat-cell *matCellDef="let row">{{ row.dataVencimento | date:'dd/MM/yyyy' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let row">
+                <span class="status-badge" [ngClass]="getStatusClass(row.status)">{{ getStatusLabel(row.status) }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acoes">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
+              <td mat-cell *matCellDef="let row">
+                @if (row.status === 'PENDENTE' || row.status === 'ATRASADO') {
+                  <button mat-icon-button (click)="onBaixarPagar(row)" matTooltip="Baixar / Pagar" color="primary">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                }
+                @if (row.status === 'PAGO') {
+                  <button mat-icon-button (click)="onEstornarPagar(row)" matTooltip="Estornar Pagamento" color="warn">
+                    <mat-icon>undo</mat-icon>
+                  </button>
+                }
+                @if (!row.compraId) {
+                  <button mat-icon-button (click)="onRemovePagar(row)" matTooltip="Excluir">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+                @if (row.compraId && row.status === 'PAGO') {
+                  <span class="pagamento-badge">—</span>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsPagar"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsPagar;" class="table-row"></tr>
+          </table>
+
+          @if (contasPagar().length === 0 && !loadingPagar()) {
+            <div class="empty-state">
+              <mat-icon>receipt</mat-icon>
+              <p>Nenhuma conta a pagar encontrada</p>
+              <button mat-stroked-button color="primary" (click)="openNovoPagar()">Registrar primeiro lançamento</button>
+            </div>
+          }
+
+          <mat-paginator [length]="totalPagar()" [pageSize]="pageSizePagar()" [pageIndex]="pagePagar() - 1"
+            [pageSizeOptions]="[10, 20, 50]" (page)="onPagePagarChange($event)" showFirstLastButtons></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

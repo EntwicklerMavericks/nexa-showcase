@@ -1,0 +1,149 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>{{ data.produto ? 'edit' : 'add_circle' }}</mat-icon>
+  {{ data.produto ? 'Editar Produto' : 'Novo Produto' }}
+</h2>
+<mat-dialog-content>
+  <mat-tab-group animationDuration="200ms">
+    <mat-tab label="Dados Gerais">
+      <form [formGroup]="form" class="tab-content">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="flex-2">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="nome" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>SKU</mat-label>
+            <input matInput formControlName="sku" />
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="descricao" rows="2"></textarea>
+        </mat-form-field>
+        <div class="form-row">
+          <nexa-select label="Categoria" class="flex-1" formControlName="categoriaId">
+              @for (cat of categorias; track cat.id) { <mat-option [value]="cat.id">{{ cat.nome }}</mat-option> }
+            </nexa-select>
+          <nexa-select label="Unidade Padrão" class="flex-1" formControlName="unidade">
+              <mat-option value="UN">UN (Unidade)</mat-option>
+              <mat-option value="KG">KG (Quilograma)</mat-option>
+              <mat-option value="LT">LT (Litro)</mat-option>
+              <mat-option value="MT">MT (Metro)</mat-option>
+              <mat-option value="M2">M² (Metro Quadrado)</mat-option>
+              <mat-option value="M3">M³ (Metro Cúbico)</mat-option>
+              <mat-option value="CX">CX (Caixa)</mat-option>
+              <mat-option value="PC">PC (Pacote)</mat-option>
+            </nexa-select>
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Cód. Barras</mat-label>
+            <input matInput formControlName="codigoBarras" />
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Preço Custo</mat-label>
+            <span matPrefix>R$&nbsp;</span>
+            <input matInput type="number" step="0.01" formControlName="precoCusto" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Preço Venda</mat-label>
+            <span matPrefix>R$&nbsp;</span>
+            <input matInput type="number" step="0.01" formControlName="precoVenda" />
+          </mat-form-field>
+          <div class="profit-card flex-1" [ngClass]="getMargemClass()">
+            <div class="profit-title">
+              <span>Margem de Lucro</span>
+              <mat-icon>{{ calcularMargem() >= 30 ? 'trending_up' : (calcularMargem() >= 15 ? 'trending_flat' : 'trending_down') }}</mat-icon>
+            </div>
+            <div class="profit-content">
+              <div class="profit-main">
+                <span class="profit-percent">{{ calcularMargem() | number:'1.2-2' }}%</span>
+                <span class="profit-badge" *ngIf="calcularMargem() >= 30">Excelente</span>
+                <span class="profit-badge warning" *ngIf="calcularMargem() >= 15 && calcularMargem() < 30">Média</span>
+                <span class="profit-badge danger" *ngIf="calcularMargem() < 15">Atenção</span>
+              </div>
+              <div class="profit-details">
+                R$ {{ calcularLucroReais() | number:'1.2-2' }}/un
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-tab>
+    <mat-tab label="Fiscal">
+      <form [formGroup]="form" class="tab-content">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="flex-1"><mat-label>NCM</mat-label><input matInput formControlName="ncm" /></mat-form-field>
+          <mat-form-field appearance="outline" class="flex-1"><mat-label>CFOP</mat-label><input matInput formControlName="cfop" /></mat-form-field>
+          <mat-form-field appearance="outline" class="flex-1"><mat-label>CST</mat-label><input matInput formControlName="cst" /></mat-form-field>
+        </div>
+      </form>
+    </mat-tab>
+    <mat-tab label="Medidas e Conversão">
+      <form [formGroup]="form" class="tab-content">
+        <div class="info-alert" style="margin-bottom: 16px; padding: 12px; border-radius: 8px; background: rgba(248, 148, 24, 0.08); border: 1px solid rgba(248, 148, 24, 0.25); color: var(--nexa-text-secondary); font-size: 13px; display: flex; gap: 8px; align-items: flex-start;">
+          <mat-icon style="color: var(--nexa-primary); font-size: 20px; width: 20px; height: 20px;">info</mat-icon>
+          <div>
+            <strong>Conversão de Unidade:</strong> Útil para materiais vendidos em frações/multiplicadores da unidade de armazenamento (ex: areia por metro cúbico, parafusos por caixa, pisos por m²). O estoque base será deduzido aplicando o fator.
+          </div>
+        </div>
+
+        <div class="form-row">
+          <nexa-select label="Unidade de Estoque (Armazenamento)" class="flex-1" formControlName="unidadeEstoque">
+              <mat-option value="UN">UN (Unidade)</mat-option>
+              <mat-option value="KG">KG (Quilograma)</mat-option>
+              <mat-option value="LT">LT (Litro)</mat-option>
+              <mat-option value="MT">MT (Metro)</mat-option>
+              <mat-option value="M2">M² (Metro Quadrado)</mat-option>
+              <mat-option value="M3">M³ (Metro Cúbico)</mat-option>
+              <mat-option value="CX">CX (Caixa)</mat-option>
+              <mat-option value="PC">PC (Pacote)</mat-option>
+            </nexa-select>
+
+          <nexa-select label="Unidade de Venda" class="flex-1" formControlName="unidadeVenda">
+              <mat-option value="UN">UN (Unidade)</mat-option>
+              <mat-option value="KG">KG (Quilograma)</mat-option>
+              <mat-option value="LT">LT (Litro)</mat-option>
+              <mat-option value="MT">MT (Metro)</mat-option>
+              <mat-option value="M2">M² (Metro Quadrado)</mat-option>
+              <mat-option value="M3">M³ (Metro Cúbico)</mat-option>
+              <mat-option value="CX">CX (Caixa)</mat-option>
+              <mat-option value="PC">PC (Pacote)</mat-option>
+            </nexa-select>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="flex-1">
+            <mat-label>Fator de Conversão</mat-label>
+            <input matInput type="number" step="0.0001" formControlName="fatorConversao" placeholder="Ex: 1.5 (1 Un. Venda = 1.5 Un. Estoque)" />
+          </mat-form-field>
+          <div class="flex-1" style="display: flex; align-items: center; padding-left: 8px; color: var(--nexa-text-secondary); font-size: 13px;">
+            @if (form.get('unidadeVenda')?.value && form.get('unidadeEstoque')?.value) {
+              <span>1 {{ form.get('unidadeVenda')?.value }} de venda equivale a <strong>{{ form.get('fatorConversao')?.value || 1 }}</strong> {{ form.get('unidadeEstoque')?.value }} de estoque.</span>
+            }
+          </div>
+        </div>
+      </form>
+    </mat-tab>
+    <mat-tab label="Estoque">
+      <form [formGroup]="form" class="tab-content">
+        <mat-form-field appearance="outline" style="width:50%">
+          <mat-label>Estoque Mínimo</mat-label>
+          <input matInput type="number" formControlName="estoqueMinimo" />
+        </mat-form-field>
+        @if (data.produto) {
+          <div class="stock-card-display">
+            <span class="stock-label">Estoque Atual</span>
+            <span class="stock-value" [class.low]="data.produto.estoqueAtual * 1 <= data.produto.estoqueMinimo * 1">
+              {{ data.produto.estoqueAtual }} {{ data.produto.unidade }}
+            </span>
+          </div>
+        }
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="onSave()">{{ data.produto ? 'Salvar' : 'Criar' }}</button>
+</mat-dialog-actions>

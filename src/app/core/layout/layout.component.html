@@ -1,0 +1,118 @@
+<div class="layout-container">
+  <!-- Sidebar Backdrop (Mobile only) -->
+  @if (!sidebarCollapsed() && isMobile()) {
+    <div class="sidebar-backdrop" (click)="toggleSidebar()"></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed()" [class.mobile-open]="!sidebarCollapsed() && isMobile()">
+    <div class="sidebar-header">
+      <div class="logo">
+        @if (sidebarCollapsed()) {
+          @if (empresaLogo()) {
+            <img [src]="empresaLogo()" alt="Logo Empresa" class="logo-icon-img" />
+          } @else {
+            <span class="logo-icon">⚡</span>
+          }
+        } @else {
+          @if (empresaLogo()) {
+            <img [src]="empresaLogo()" alt="Logo Empresa" class="sidebar-logo custom-logo" />
+          } @else {
+            <img src="/assets/images/logo.png" alt="NEXA Logo" class="sidebar-logo" />
+          }
+        }
+      </div>
+      <button mat-icon-button (click)="toggleSidebar()" class="collapse-btn" [class.hide-mobile]="isMobile()">
+        <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.route) {
+        @if (hasAccess(item)) {
+          @if (item.active) {
+            <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" 
+               [matTooltip]="sidebarCollapsed() ? getNotificationTooltip(item) : ''" matTooltipPosition="right"
+               (click)="onNavClick()">
+              <div class="nav-icon-wrapper" style="position: relative; display: inline-flex; align-items: center; justify-content: center;">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                @if (getNotificationCount(item) > 0 && sidebarCollapsed()) {
+                  <span class="menu-alert-dot-collapsed"></span>
+                }
+              </div>
+              @if (!sidebarCollapsed()) {
+                <span class="nav-label">{{ item.label }}</span>
+                @if (getNotificationCount(item) > 0) {
+                  <span class="menu-alert-badge">{{ getNotificationCount(item) }}</span>
+                }
+              }
+            </a>
+          } @else {
+            <div class="nav-item disabled" 
+                 [matTooltip]="sidebarCollapsed() ? item.label + ' (Em breve)' : 'Módulo em desenvolvimento'" matTooltipPosition="right">
+              <mat-icon style="opacity: 0.35;">{{ item.icon }}</mat-icon>
+              @if (!sidebarCollapsed()) {
+                <span class="nav-label" style="opacity: 0.35;">{{ item.label }}</span>
+                <span class="coming-soon-badge">Breve</span>
+              }
+            </div>
+          }
+        }
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <mat-divider></mat-divider>
+      <a class="nav-item" (click)="authService.logout()" style="cursor: pointer;">
+        <mat-icon>logout</mat-icon>
+        @if (!sidebarCollapsed()) {
+          <span class="nav-label">Sair</span>
+        }
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="toolbar">
+      <div class="toolbar-left" style="display: flex; align-items: center; gap: 8px;">
+        <button mat-icon-button class="mobile-menu-btn" (click)="toggleSidebar()" *ngIf="isMobile()" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+          @if (empresaLogo()) {
+            <img [src]="empresaLogo()" alt="Logo" style="width: 24px; height: 24px; object-fit: contain; border-radius: 4px;" />
+          } @else {
+            <span class="logo-icon" style="font-size: 22px; color: var(--nexa-primary); font-weight: bold;">⚡</span>
+          }
+        </button>
+        <h1 class="page-title" style="margin: 0; line-height: 1;">{{ pageTitle() }}</h1>
+      </div>
+      <div class="toolbar-right">
+        <!-- Theme Toggle Switch -->
+        <button mat-icon-button (click)="toggleTheme()" [matTooltip]="isDarkMode() ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'" class="theme-toggle-btn">
+          <mat-icon>{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn">
+          @if (authService.currentUser()?.avatarUrl) {
+            <img [src]="authService.currentUser()?.avatarUrl" alt="Avatar" class="user-avatar-img" style="width: 36px; height: 36px; min-width: 36px; min-height: 36px; flex-shrink: 0; border-radius: 50%; object-fit: cover; border: 2px solid var(--nexa-primary);" />
+          } @else {
+            <div class="user-avatar">{{ userInitial() }}</div>
+          }
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <div class="user-menu-header">
+            <strong>{{ authService.currentUser()?.nome }}</strong>
+            <small>{{ authService.currentUser()?.email }}</small>
+            <span class="role-badge">{{ authService.currentUser()?.role }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="openPerfilDialog()"><mat-icon>person</mat-icon><span>Meu perfil</span></button>
+          <button mat-menu-item (click)="authService.logout()"><mat-icon>logout</mat-icon><span>Sair</span></button>
+        </mat-menu>
+      </div>
+    </header>
+
+    <div class="page-content nexa-fade-in">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

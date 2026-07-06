@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ data.tipo === 'receber' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+  {{ data.tipo === 'receber' ? 'Novo Lançamento a Receber' : 'Novo Lançamento a Pagar' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-2">
+        <mat-label>Descrição</mat-label>
+        <input matInput formControlName="descricao" placeholder="Ex: Pagamento de aluguel" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Valor (R$)</mat-label>
+        <input matInput formControlName="valor" type="number" step="0.01" min="0.01" />
+        <mat-icon matPrefix>attach_money</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Data de Vencimento</mat-label>
+        <input matInput formControlName="dataVencimento" type="date" />
+        <mat-icon matPrefix>event</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <nexa-select label="Forma de Pagamento" class="flex-1" formControlName="formaPagamento">
+          @for (fp of formasPagamento; track fp.value) {
+            <mat-option [value]="fp.value">{{ fp.label }}</mat-option>
+          }
+        </nexa-select>
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Parcelas</mat-label>
+        <input matInput formControlName="parcelas" type="number" min="1" max="48" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Observações</mat-label>
+      <textarea matInput formControlName="observacoes" rows="3" placeholder="Observações opcionais..."></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onSave()" [disabled]="!form.valid">
+    <mat-icon>save</mat-icon> Salvar
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,340 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.header-left h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.record-count {
+  font-size: 13px;
+  color: #9f9f9f;
+}
+.tabs-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+.nexa-tab-btn {
+  background: none;
+  border: none;
+  color: #9f9f9f;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.nexa-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.03);
+}
+.nexa-tab-btn.active {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.08);
+}
+.nexa-tab-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.tab-badge {
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+
+.main-content-area {
+  min-height: 400px;
+}
+
+/* Tabela Customizada */
+.table-container {
+  overflow-x: auto;
+  padding: 16px 20px !important;
+}
+.nexa-table-custom {
+  width: 100%;
+  border-collapse: collapse;
+}
+.nexa-table-custom th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9f9f9f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.nexa-table-custom td {
+  padding: 14px 16px;
+  font-size: 13.5px;
+  color: #dfdfdf;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.table-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+.table-row.selected {
+  background: rgba(249, 115, 22, 0.04);
+}
+.materials-summary {
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: help;
+}
+.empty-row {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: #9f9f9f;
+}
+.empty-row mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #22c55e;
+  margin-bottom: 8px;
+}
+
+/* Grid de Cargas */
+.cargas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  @media (max-width: 400px) {
+    grid-template-columns: 1fr;
+  }
+}
+.carga-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px !important;
+  gap: 16px;
+}
+.carga-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+.title-section h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nexa-text, #ffffff);
+}
+.title-section .date {
+  font-size: 11px;
+  color: var(--nexa-text-secondary, #9f9f9f);
+}
+.status-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.status-badge.preparacao { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+.status-badge.em_rota { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.status-badge.entregue { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.status-badge.cancelada { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.carga-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--nexa-text, #dfdfdf);
+}
+.detail-item mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--nexa-text-secondary, #9f9f9f);
+}
+
+/* Seção Progresso */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0;
+}
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nexa-text-secondary, #9f9f9f);
+}
+.progress-bar-container {
+  height: 6px;
+  background: var(--nexa-border, rgba(255, 255, 255, 0.06));
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  border-radius: 3px;
+}
+
+/* Lista Nested de Entregas */
+.nested-deliveries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--nexa-surface-light, rgba(0, 0, 0, 0.15));
+  border: 1px solid var(--nexa-border, rgba(255, 255, 255, 0.04));
+  border-radius: 8px;
+  padding: 12px;
+}
+.nested-deliveries-list h4 {
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nexa-text, #ffffff);
+  text-transform: uppercase;
+}
+.delivery-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  background: var(--nexa-surface, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--nexa-border, rgba(255, 255, 255, 0.04));
+  border-radius: 6px;
+}
+.stop-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--nexa-border, rgba(255, 255, 255, 0.06));
+  color: var(--nexa-text, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+.stop-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.stop-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--nexa-text, #ffffff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stop-address {
+  font-size: 10px;
+  color: var(--nexa-text-secondary, #9f9f9f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stop-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-pill {
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9f9f9f;
+}
+.delivery-row.entregue .status-pill { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.delivery-row.falhou .status-pill { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.delivery-row.cancelada .status-pill { background: rgba(255, 255, 255, 0.05); color: #9f9f9f; }
+.delivery-row.em_rota .status-pill { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+
+.stop-status-actions button {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+}
+.stop-status-actions mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.carga-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid var(--nexa-border, rgba(255, 255, 255, 0.08));
+  padding-top: 12px;
+}
+.action-btn-lote {
+  padding: 0 20px;
+  font-weight: 600;
+}
+.empty-state-full {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px !important;
+  color: #9f9f9f;
+}
+.empty-state-full mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #f97316;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+.empty-state-full h3 {
+  color: #ffffff;
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+
+/* Mobile Fixes for Logistica */
+@media (max-width: 768px) {
+  .cargas-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .carga-card-actions {
+    flex-direction: column;
+    button { width: 100%; }
+  }
+  
+  .delivery-row {
+    flex-wrap: wrap;
+  }
+}

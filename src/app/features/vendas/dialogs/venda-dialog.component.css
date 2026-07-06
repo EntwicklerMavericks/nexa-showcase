@@ -1,0 +1,644 @@
+/* =============================================================================
+   Nexa ERP — PDV Sales Dialog Stylesheet
+   ============================================================================= */
+
+.pdv-dialog-content {
+  padding: 8px 0;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.pdv-layout-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .pdv-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.pdv-cart-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0; /* Prevents flexbox overflow */
+}
+
+.pdv-checkout-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+}
+
+/* Header Sections */
+.items-header, .checkout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.items-header h3, .checkout-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #dfdfdf;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Items List Container */
+.items-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.items-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+.items-list-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Item Row Styling */
+.item-row {
+  display: grid;
+  grid-template-columns: 1fr 105px 100px 90px 40px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.item-row:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(249, 115, 22, 0.3); /* Nexa Primary highlight */
+}
+
+.item-row mat-form-field {
+  width: 100%;
+}
+
+.item-row mat-form-field ::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: transparent !important;
+}
+
+/* Fields row in Checkout column */
+.checkout-fields {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.01) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row-2 {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row-2 mat-form-field {
+  flex: 1;
+}
+
+/* Empty State */
+.empty-state-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.01) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+}
+
+.empty-state-dialog mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: rgba(255, 255, 255, 0.25);
+  margin-bottom: 12px;
+}
+
+.empty-state-dialog p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+/* Financial Summary Card */
+.values-summary-card {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.summary-line .discount {
+  color: #f43f5e;
+  font-weight: 500;
+}
+
+.summary-line.total-line {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 6px;
+  padding-top: 12px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* UI tweaks */
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.nexa-button-sm {
+  height: 32px !important;
+  font-size: 12.5px !important;
+  padding: 0 12px !important;
+}
+
+.dialog-actions-footer {
+  padding: 16px 24px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(18, 18, 18, 0.95);
+}
+
+.barcode-scan-container mat-form-field {
+  width: 100%;
+}
+
+/* =============================================================================
+   Modal de Alerta de Estoque Zerado
+   ============================================================================= */
+.estoque-alerta-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 10, 15, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.estoque-alerta-card {
+  background: #1e1e2d;
+  border: 1px solid rgba(248, 148, 24, 0.25);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 440px;
+  padding: 32px 28px;
+  text-align: center;
+  animation: nexaAlertScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes nexaAlertScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.alerta-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(248, 148, 24, 0.1);
+  margin-bottom: 20px;
+  border: 1px solid rgba(248, 148, 24, 0.2);
+}
+
+.alerta-icon-container mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #f89418;
+}
+
+.pulse-warn {
+  animation: nexaPulseWarn 2s infinite;
+}
+
+@keyframes nexaPulseWarn {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.alerta-title {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
+}
+
+.alerta-message {
+  color: #e2e8f0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.alerta-submessage {
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 28px;
+}
+
+.alerta-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.alerta-actions button {
+  height: 42px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 0 20px !important;
+}
+
+.alerta-btn-cancel {
+  color: #94a3b8 !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+.alerta-btn-cancel:hover {
+  background: rgba(148, 163, 184, 0.08) !important;
+}
+
+.alerta-btn-confirm {
+  background: var(--nexa-primary, #f89418) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(248, 148, 24, 0.25) !important;
+}
+.alerta-btn-confirm:hover {
+  background: #e08210 !important;
+  box-shadow: 0 6px 16px rgba(248, 148, 24, 0.4) !important;
+}
+
+/* =============================================================================
+   Painel do Crediário Premium
+   ============================================================================= */
+.crediario-premium-card {
+  padding: 18px 20px;
+  background: linear-gradient(145deg, rgba(30,30,45,0.6), rgba(20,20,30,0.8)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.crediario-premium-card.over-limit {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: linear-gradient(145deg, rgba(239, 68, 68, 0.08), rgba(20,20,30,0.8)) !important;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.15);
+}
+.crediario-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #dfdfdf;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 10px;
+}
+.crediario-header mat-icon {
+  color: #f97316;
+}
+.crediario-details {
+  display: flex;
+  flex-direction: column;
+}
+.credit-limit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.credit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+.credit-row .lbl {
+  color: rgba(255, 255, 255, 0.6);
+}
+.credit-row .val {
+  font-weight: 600;
+  color: #ffffff;
+}
+.credit-row.highlight {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  font-size: 14.5px;
+}
+.limit-warning {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  align-items: flex-start;
+}
+.limit-warning mat-icon {
+  margin-top: 2px;
+}
+.limit-warning p {
+  margin: 4px 0 0 0;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.6);
+}
+.status-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+}
+.status-msg.danger {
+  color: #ef4444;
+}
+.status-msg.danger mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.status-msg.loading {
+  color: rgba(255, 255, 255, 0.6);
+  justify-content: center;
+  padding: 16px 0;
+}
+.mini-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #f97316;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =============================================================================
+   Painel de Pagamento via PIX
+   ============================================================================= */
+.pix-payment-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: nexaFadeIn 0.25s ease-out;
+}
+
+@keyframes nexaFadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pix-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.pix-logo {
+  height: 20px;
+  object-fit: contain;
+}
+
+.pix-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #dfdfdf;
+}
+
+.pix-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.qrcode-container {
+  position: relative;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 8px;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.pix-qrcode {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.qrcode-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(26, 26, 36, 0.9);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 16px;
+  gap: 6px;
+  animation: scaleUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.qrcode-overlay mat-icon {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.pix-instructions {
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.pix-instructions p {
+  margin: 2px 0;
+}
+
+.pix-code-copy-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 2px 8px;
+  box-sizing: border-box;
+}
+
+.pix-payload-input {
+  border: none !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 11px !important;
+  font-family: monospace !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 1;
+  pointer-events: none;
+}
+
+.pix-actions {
+  width: 100%;
+}
+
+.simulate-pix-btn {
+  width: 100% !important;
+  height: 36px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  border-color: rgba(249, 115, 22, 0.4) !important;
+  color: #f97316 !important;
+}
+
+.simulate-pix-btn:hover {
+  background: rgba(249, 115, 22, 0.05) !important;
+}
+
+
+
+@media (max-width: 768px) {
+  /* Allow mat-dialog-content to scroll natively so cdkScrollable works for overlays like mat-select */
+  .pdv-dialog-content {
+    max-height: calc(100vh - 140px) !important; /* Force scroll inside the content, never the wrapper */
+    overflow-y: auto !important;
+  }
+  
+  .items-list-container {
+    max-height: unset !important;
+    /* We keep overflow visible here so the entire column flows and we scroll the parent dialog content */
+    overflow: visible !important;
+  }
+
+  .item-row {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-areas: 
+      "produto produto"
+      "qtd unitario"
+      "desconto acao" !important;
+    gap: 8px !important;
+  }
+  
+  .item-row mat-form-field.flex-2 { grid-area: produto; width: 100% !important; }
+  .item-row mat-form-field.qty-field { grid-area: qtd; width: 100% !important; }
+  .item-row mat-form-field.price-field { grid-area: unitario; width: 100% !important; }
+  .item-row mat-form-field.discount-field { grid-area: desconto; width: 100% !important; }
+  .item-row button.remove-btn { grid-area: acao; justify-self: start; margin-top: 8px; }
+
+  .form-row-2, .form-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .pdv-checkout-col {
+    position: static !important;
+  }
+
+  .pdv-checkout-col mat-form-field, .pdv-checkout-col mat-select {
+    width: 100% !important;
+  }
+  
+  .empty-state-dialog p {
+    font-size: 12px;
+  }
+}
+
+

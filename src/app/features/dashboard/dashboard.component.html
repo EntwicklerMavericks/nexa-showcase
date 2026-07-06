@@ -1,0 +1,186 @@
+<div *ngIf="hasOnboarded(); else onboardingView" class="dashboard-container nexa-fade-in">
+  <div class="welcome-header">
+    <div class="header-left">
+      <h2>Painel de Controle Consolidado</h2>
+      <p class="subtitle">Bem-vindo de volta ao <span class="nexa-gradient-text" style="font-weight: 700;">Nexa ERP</span>. Veja o desempenho da sua loja hoje.</p>
+    </div>
+    <button mat-stroked-button color="primary" (click)="loadDashboardData()" [disabled]="loading()" class="refresh-btn">
+      <mat-icon [class.rotating]="loading()">refresh</mat-icon> Atualizar Dados
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 1. KEY PERFORMANCE INDICATORS (KPIs)                                      -->
+  <!-- ========================================================================= -->
+  <div class="kpi-grid">
+    <!-- Faturamento Hoje -->
+    <div class="kpi-card nexa-card nexa-glow">
+      <div class="kpi-icon-wrapper faturamento-hoje">
+        <mat-icon>monetization_on</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Faturamento Hoje</span>
+        <h3 class="kpi-value">{{ (data()?.faturamentoHoje || 0) | currency:'BRL' }}</h3>
+        <span class="kpi-trend positive" *ngIf="data()?.vendasHojeCount && data()!.vendasHojeCount > 0">
+          <mat-icon>trending_up</mat-icon> {{ data()?.vendasHojeCount }} venda(s) realizada(s)
+        </span>
+        <span class="kpi-trend neutral" *ngIf="!data()?.vendasHojeCount || data()!.vendasHojeCount === 0">
+          Nenhuma venda registrada hoje
+        </span>
+      </div>
+    </div>
+
+    <!-- Faturamento Mês -->
+    <div class="kpi-card nexa-card">
+      <div class="kpi-icon-wrapper faturamento-mes">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Faturamento no Mês</span>
+        <h3 class="kpi-value">{{ (data()?.faturamentoMes || 0) | currency:'BRL' }}</h3>
+        <span class="kpi-trend positive" style="color: var(--nexa-primary);">
+          Mês corrente acumulado
+        </span>
+      </div>
+    </div>
+
+    <!-- Ticket Médio -->
+    <div class="kpi-card nexa-card">
+      <div class="kpi-icon-wrapper ticket-medio">
+        <mat-icon>receipt</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Ticket Médio (Mês)</span>
+        <h3 class="kpi-value">{{ (data()?.ticketMedio || 0) | currency:'BRL' }}</h3>
+        <span class="kpi-trend neutral">
+          Média por transação
+        </span>
+      </div>
+    </div>
+
+    <!-- Orçamentos Abertos -->
+    <div class="kpi-card nexa-card" routerLink="/orcamentos" style="cursor: pointer;">
+      <div class="kpi-icon-wrapper orcamentos">
+        <mat-icon>assignment</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Orçamentos Pendentes</span>
+        <h3 class="kpi-value">{{ data()?.orcamentosPendentes || 0 }}</h3>
+        <span class="kpi-trend warning" *ngIf="data()?.orcamentosPendentes && data()!.orcamentosPendentes > 0">
+          <mat-icon>hourglass_empty</mat-icon> Aguardando conversão
+        </span>
+        <span class="kpi-trend positive" *ngIf="!data()?.orcamentosPendentes || data()!.orcamentosPendentes === 0">
+          Zero orçamentos pendentes
+        </span>
+      </div>
+    </div>
+
+    <!-- Estoque Crítico -->
+    <div class="kpi-card nexa-card" routerLink="/estoque" style="cursor: pointer;" [class.critical-glow]="data()?.estoqueCritico && data()!.estoqueCritico > 0">
+      <div class="kpi-icon-wrapper estoque" [class.critical-bg]="data()?.estoqueCritico && data()!.estoqueCritico > 0">
+        <mat-icon color="warn">warning</mat-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Estoque Crítico</span>
+        <h3 class="kpi-value" [style.color]="data()?.estoqueCritico && data()!.estoqueCritico > 0 ? '#f44336' : 'inherit'">
+          {{ data()?.estoqueCritico || 0 }}
+        </h3>
+        <span class="kpi-trend" [class.negative]="data()?.estoqueCritico && data()!.estoqueCritico > 0" [class.positive]="!data()?.estoqueCritico || data()!.estoqueCritico === 0">
+          {{ data()?.estoqueCritico && data()!.estoqueCritico > 0 ? 'Abaixo do estoque mínimo!' : 'Nível de estoque adequado' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. ANALYTICS & CHARTS BOARD                                                -->
+  <!-- ========================================================================= -->
+  <div class="analytics-grid" style="margin-top: 32px;">
+    
+    <!-- Sales Evolution SVG Line Chart -->
+    <div class="analytics-card nexa-card sales-chart-card">
+      <h3 class="card-title"><mat-icon>show_chart</mat-icon> Evolução das Vendas (Últimos 30 Dias)</h3>
+      
+      <div class="chart-container" style="position: relative; height: 220px; margin-top: 16px;">
+        <div class="chart-y-axis" style="position: absolute; left: 0; top: 0; bottom: 30px; width: 40px; display: flex; flex-direction: column; justify-content: space-between; font-size: 11px; color: var(--nexa-text-muted); text-align: right; padding-right: 8px;">
+          <span>{{ maxSaleVal() | currency:'BRL':'symbol':'1.0-0' }}</span>
+          <span>{{ (maxSaleVal() / 2) | currency:'BRL':'symbol':'1.0-0' }}</span>
+          <span>R$ 0</span>
+        </div>
+        
+        <div class="chart-body" style="margin-left: 45px; height: 180px; border-left: 1px dashed var(--nexa-border); border-bottom: 1px dashed var(--nexa-border); position: relative;">
+          <!-- Grid Lines -->
+          <div style="position: absolute; left: 0; right: 0; top: 0; border-top: 1px dashed var(--nexa-border); opacity: 0.3;"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--nexa-border); opacity: 0.3;"></div>
+          
+          <!-- SVG Polyline Graph -->
+          <svg viewBox="0 0 600 180" width="100%" height="100%" preserveAspectRatio="none" style="overflow: visible;">
+            <!-- Gradient Area under curve -->
+            <defs>
+              <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--nexa-primary)" stop-opacity="0.25" />
+                <stop offset="100%" stop-color="var(--nexa-primary)" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path [attr.d]="svgAreaPath()" fill="url(#chartGrad)" />
+            
+            <!-- Line -->
+            <polyline [attr.points]="svgPoints()" fill="none" stroke="var(--nexa-primary)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            
+            <!-- Interactive Dots -->
+            @for (pt of svgDotCoords(); track pt.index) {
+              <circle [attr.cx]="pt.x" [attr.cy]="pt.y" r="5" fill="#ffffff" stroke="var(--nexa-primary)" stroke-width="2.5" class="chart-dot">
+                <title>{{ pt.tooltip }}</title>
+              </circle>
+            }
+          </svg>
+        </div>
+        
+        <!-- X Axis Dates -->
+        <div class="chart-x-axis" style="margin-left: 45px; height: 30px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--nexa-text-muted); padding-top: 8px;">
+          <span>{{ firstDate() | date:'dd/MM' }}</span>
+          <span>{{ midDate() | date:'dd/MM' }}</span>
+          <span>{{ lastDate() | date:'dd/MM' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top 5 Best Selling Products (Visual bars) -->
+    <div class="analytics-card nexa-card products-ranking-card">
+      <h3 class="card-title"><mat-icon>star</mat-icon> Produtos Mais Vendidos</h3>
+      <p class="card-subtitle" style="font-size: 12px; color: var(--nexa-text-secondary); margin-bottom: 24px;">Top faturamento acumulado nos últimos 30 dias</p>
+      
+      <div class="ranking-list" style="display: flex; flex-direction: column; gap: 18px;">
+        @for (prod of data()?.topProdutos; track prod.produtoId; let idx = $index) {
+          <div class="ranking-item">
+            <div class="item-meta" style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px;">
+              <span style="display: flex; gap: 8px; align-items: center;">
+                <span class="rank-number" [class]="'rank-' + (idx + 1)">#{{ idx + 1 }}</span>
+                <span class="product-name" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ prod.nome }}</span>
+              </span>
+              <span class="product-revenue">{{ prod.faturamento | currency:'BRL' }}</span>
+            </div>
+            
+            <div class="bar-container" style="height: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 5px; overflow: hidden; position: relative;">
+              <div class="bar-fill" [style.width.%]="prod.participacaoPercentual || 1" [class]="'bar-color-' + (idx + 1)" style="height: 100%; border-radius: 5px; transition: width 1s cubic-bezier(0.1, 1, 0.1, 1);"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--nexa-text-secondary); margin-top: 4px;">
+              <span>Qtd vendida: {{ prod.quantidade }}</span>
+              <span>{{ prod.participacaoPercentual | number:'1.1-1' }}% do faturamento</span>
+            </div>
+          </div>
+        }
+        
+        <div *ngIf="!data()?.topProdutos || data()!.topProdutos.length === 0" style="padding: 48px; text-align: center; color: var(--nexa-text-secondary);">
+          <mat-icon style="font-size: 40px; width: 40px; height: 40px;">star_border</mat-icon>
+          <p>Nenhuma venda registrada nos últimos 30 dias para classificar produtos.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #onboardingView>
+  <app-onboarding-wizard (onComplete)="finishOnboarding()"></app-onboarding-wizard>
+</ng-template>

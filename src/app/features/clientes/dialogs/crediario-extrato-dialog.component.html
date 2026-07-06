@@ -1,0 +1,112 @@
+<h2 mat-dialog-title class="dialog-header-extrato">
+  <div class="title-left">
+    <mat-icon color="primary">receipt_long</mat-icon>
+    <span>Extrato de Crediário — {{ client()?.nome }}</span>
+  </div>
+</h2>
+
+<mat-dialog-content class="extrato-dialog-content">
+  <!-- Painel de Indicadores Financeiros do Cliente -->
+  <div class="extrato-summary-cards">
+    <div class="summary-card">
+      <span class="card-label">Limite de Crédito</span>
+      <span class="card-value">R$ {{ (client()?.limiteCredito || 0) | number:'1.2-2' }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="card-label">Saldo Devedor Ativo</span>
+      <span class="card-value text-orange-500">R$ {{ (client()?.saldoDevedor || 0) | number:'1.2-2' }}</span>
+    </div>
+    <div class="summary-card highlight">
+      <span class="card-label">Crédito Disponível</span>
+      <span class="card-value text-green-500">
+        R$ {{ ((client()?.limiteCredito || 0) - (client()?.saldoDevedor || 0)) | number:'1.2-2' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="parcelas-section-title">
+    <h3>Histórico de Lançamentos</h3>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state-dialog">
+      <div class="loader-circle"></div>
+      <p>Buscando histórico financeiro do cliente...</p>
+    </div>
+  } @else {
+    <div class="table-wrapper-dialog">
+      <table mat-table [dataSource]="parcelas()" class="nexa-table">
+        <!-- Descrição -->
+        <ng-container matColumnDef="descricao">
+          <th mat-header-cell *matHeaderCellDef>Descrição / Parcela</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="desc-cell">{{ row.descricao }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Vencimento -->
+        <ng-container matColumnDef="dataVencimento">
+          <th mat-header-cell *matHeaderCellDef>Vencimento</th>
+          <td mat-cell *matCellDef="let row">
+            {{ row.dataVencimento | date:'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
+
+        <!-- Valor -->
+        <ng-container matColumnDef="valor">
+          <th mat-header-cell *matHeaderCellDef>Valor</th>
+          <td mat-cell *matCellDef="let row">
+            R$ {{ row.valor | number:'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="status-badge" 
+                  [class.active]="row.status === 'PAGO'"
+                  [class.inactive]="row.status === 'CANCELADO'"
+                  [class.atrasado]="row.status === 'ATRASADO'"
+                  [class.pendente]="row.status === 'PENDENTE'">
+              {{ getStatusLabel(row.status) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Ações -->
+        <ng-container matColumnDef="acoes">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let row">
+            @if (row.status === 'PENDENTE' || row.status === 'ATRASADO') {
+              <button mat-icon-button color="primary" (click)="baixarParcela(row.id)" matTooltip="Receber (Dar Baixa)">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+            } @else {
+              <button mat-icon-button [disabled]="true" matTooltip="Parcela Liquidada">
+                <mat-icon style="opacity: 0.35;">done_all</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+      </table>
+
+      @if (parcelas().length === 0) {
+        <div class="empty-state-dialog">
+          <mat-icon>receipt_long</mat-icon>
+          <p>Nenhum lançamento no crediário registrado para este cliente.</p>
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions-footer">
+  <button mat-button mat-dialog-close>Fechar</button>
+  <button mat-flat-button color="primary" (click)="imprimirCarne()" [disabled]="parcelas().length === 0" style="padding: 0 20px;">
+    <mat-icon style="margin-right: 6px;">print</mat-icon> Imprimir Carnê da Loja
+  </button>
+</mat-dialog-actions>

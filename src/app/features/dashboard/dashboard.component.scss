@@ -1,0 +1,235 @@
+.dashboard-container {
+  padding: 12px 0 32px;
+}
+
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    color: var(--nexa-text-secondary);
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+.refresh-btn {
+  height: 44px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+// =========================================================================
+// KPI Cards CSS
+// =========================================================================
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.kpi-card {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 24px !important;
+  border-radius: 16px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+  }
+}
+
+html.light-theme .kpi-card:hover {
+  box-shadow: 0 12px 30px rgba(0,0,0,0.04) !important;
+}
+
+.critical-glow {
+  box-shadow: 0 0 20px rgba(244, 67, 54, 0.15) !important;
+  border-color: rgba(244, 67, 54, 0.3) !important;
+}
+
+.kpi-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+
+  mat-icon {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+  }
+
+  &.faturamento-hoje {
+    background: rgba(248, 148, 24, 0.1);
+    color: var(--nexa-primary);
+  }
+
+  &.faturamento-mes {
+    background: rgba(33, 150, 243, 0.1);
+    color: #2196f3;
+  }
+
+  &.ticket-medio {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+  }
+
+  &.orcamentos {
+    background: rgba(156, 39, 176, 0.1);
+    color: #9c27b0;
+  }
+
+  &.estoque {
+    background: rgba(244, 67, 54, 0.05);
+    color: #f44336;
+  }
+
+  &.critical-bg {
+    background: rgba(244, 67, 54, 0.15) !important;
+    animation: pulseCritico 2s infinite;
+  }
+}
+
+@keyframes pulseCritico {
+  0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(244, 67, 54, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--nexa-text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  .kpi-trend {
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+
+    &.positive { color: #4caf50; }
+    &.neutral { color: var(--nexa-text-muted); }
+    &.warning { color: #ff9800; }
+    &.negative { color: #f44336; }
+  }
+}
+
+// =========================================================================
+// Analytics Charts CSS
+// =========================================================================
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 992px) {
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.analytics-card {
+  padding: 28px !important;
+  border-radius: 16px !important;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+
+  mat-icon {
+    color: var(--nexa-primary);
+  }
+}
+
+.chart-dot {
+  transition: r 0.2s ease, stroke-width 0.2s ease;
+  cursor: pointer;
+  &:hover {
+    r: 8px;
+    stroke-width: 4px;
+  }
+}
+
+// Best Sellers Ranking progress bar colors
+.rank-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+
+  &.rank-1 { background: linear-gradient(135deg, #ffb300, #ff8f00); }
+  &.rank-2 { background: linear-gradient(135deg, #b0bec5, #78909c); }
+  &.rank-3 { background: linear-gradient(135deg, #a1887f, #8d6e63); }
+  &.rank-4, &.rank-5 { background: rgba(255, 255, 255, 0.1); color: var(--nexa-text-secondary); }
+}
+
+html.light-theme .rank-4, html.light-theme .rank-5 {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bar-color-1 { background: linear-gradient(90deg, #ff8f00, #ffb300) !important; }
+.bar-color-2 { background: linear-gradient(90deg, #78909c, #b0bec5) !important; }
+.bar-color-3 { background: linear-gradient(90deg, #8d6e63, #a1887f) !important; }
+.bar-color-4 { background: linear-gradient(90deg, #42a5f5, #90caf9) !important; }
+.bar-color-5 { background: linear-gradient(90deg, #ab47bc, #ce93d8) !important; }
+
+.rotating {
+  animation: rot 1.2s linear infinite;
+}
+
+@keyframes rot {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

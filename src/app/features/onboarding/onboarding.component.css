@@ -1,0 +1,173 @@
+.onboarding-layout {
+  min-height: 100vh;
+  background-color: #0b0d10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.onboarding-header {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.plan-badge {
+  background-color: rgba(255, 138, 0, 0.1);
+  color: #ff8a00;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #ff8a00;
+  font-weight: 600;
+}
+
+.onboarding-container {
+  width: 100%;
+  max-width: 800px;
+  background-color: #14171d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.step-content {
+  padding: 24px 0;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.w-100 {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.nexa-error {
+  color: #ff4d4f !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Force red color on the input border and label when the field is invalid */
+::ng-deep .mat-mdc-form-field:has(input.ng-invalid.ng-dirty) .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field:has(input.ng-invalid.ng-dirty) .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field:has(input.ng-invalid.ng-dirty) .mdc-notched-outline__trailing {
+  border-color: #ff4d4f !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .mat-mdc-form-field:has(input.ng-invalid.ng-dirty) .mdc-floating-label,
+::ng-deep .mat-mdc-form-field:has(input.ng-invalid.ng-dirty) .mdc-floating-label--float-above {
+  color: #ff4d4f !important;
+}
+
+::ng-deep .mat-mdc-form-field:has(input.ng-invalid.ng-dirty) .mat-mdc-input-element {
+  caret-color: #ff4d4f !important;
+}
+
+.step-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.step-actions.split {
+  justify-content: space-between;
+}
+
+.nexa-primary-btn {
+  padding: 8px 24px;
+  font-weight: 600;
+  background-color: #ff8a00 !important;
+  color: white !important;
+}
+
+.checkout-summary {
+  background-color: #1c2028;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  margin-bottom: 32px;
+}
+
+.checkout-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #ff8a00;
+  margin-bottom: 16px;
+}
+
+.price-box {
+  background: #0b0d10;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+  margin-top: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.price-label {
+  font-weight: 600;
+  color: #9499a3;
+}
+
+.price-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ff8a00;
+}
+
+/* Material Stepper Overrides for Dark Theme */
+::ng-deep .mat-step-header {
+  background-color: transparent !important;
+}
+
+::ng-deep .mat-step-header .mat-step-icon {
+  background-color: #2a2e38;
+  color: #9499a3;
+}
+
+::ng-deep .mat-step-header .mat-step-icon-selected {
+  background-color: #ff8a00 !important;
+  color: white !important;
+}
+
+::ng-deep .mat-step-header .mat-step-label {
+  color: #9499a3 !important;
+}
+
+::ng-deep .mat-step-header .mat-step-label.mat-step-label-active {
+  color: white !important;
+  font-weight: 600;
+}
+
+::ng-deep .mat-stepper-horizontal {
+  background-color: transparent !important;
+}
+
+::ng-deep .mat-mdc-form-field-hint {
+  color: #9499a3 !important;
+}
+
+/* Fix Autofill Background Color in Dark Theme */
+::ng-deep input:-webkit-autofill,
+::ng-deep input:-webkit-autofill:hover, 
+::ng-deep input:-webkit-autofill:focus, 
+::ng-deep input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #14171d inset !important;
+    -webkit-text-fill-color: white !important;
+    caret-color: white !important;
+    border-radius: 0 !important;
+}
