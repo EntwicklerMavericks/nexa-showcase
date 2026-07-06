@@ -1,5 +1,7 @@
 {
   "name": "nexa-showcase",
   "compatibility_date": "2024-03-20",
-  "pages_build_output_dir": "./dist/nexa-frontend/browser"
+  "assets": {
+    "directory": "./dist/nexa-frontend"
+  }
 }
