@@ -1,3 +1,10 @@
+## Uso do código
+
+Este repositório é disponibilizado exclusivamente para demonstração técnica e avaliação profissional.
+
+Nenhuma permissão é concedida para copiar, modificar, redistribuir ou utilizar este código, total ou parcialmente, sem autorização expressa do autor.
+
+
 # ⚡ Nexa ERP Showcase — Angular Standalone & Zero-Backend Demo
 
 [![Angular](https://img.shields.io/badge/Angular-21.x-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.dev/)
