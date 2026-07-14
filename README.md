@@ -10,7 +10,6 @@ Nenhuma permissão é concedida para copiar, modificar, redistribuir ou utilizar
 [![Angular](https://img.shields.io/badge/Angular-21.x-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 Este repositório contém a versão **showcase/demo standalone** do **Nexa ERP**, um sistema de gestão comercial avançado projetado para o segmento de varejo e materiais de construção.
 
